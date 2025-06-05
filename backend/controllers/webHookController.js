@@ -6,6 +6,8 @@ const zoomService = require("../services/zoom.service");
 const emailService = require("../services/email.service");
 const moment = require("moment");
 const handleRazorpayWebhook = async (req, res, next) => {
+  console.log('webhook call');
+  
   const { event } = req.body;
   if (event === "order.paid") {
     const bookingId = req.body.payload.payment.entity.notes.bookingId;

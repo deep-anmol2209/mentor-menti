@@ -9,7 +9,7 @@ const routes = require('./routes/v1');
 const config = require('./config');
 
 app.use(cors({
-    origin: 'mentor-menti-uint.vercel.app'
+    origin: 'https://mentor-menti-uint.vercel.app'
   }));
 
 

@@ -6,6 +6,7 @@ const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { date, timeSlot, price } = location.state || {}; // Extract state from location
+console.log(location.state);
 
   const [mobileNumber, setMobileNumber] = useState("");
   const [orderId, setOrderId] = useState(null);

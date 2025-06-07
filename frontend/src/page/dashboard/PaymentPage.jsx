@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import paymentApi from "../../apiManager/payment"; // Use the default exported API manager
-
+import bookService from "../../apiManager/booking"
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { date, timeSlot, price } = location.state || {}; // Extract state from location
+  const { date, timeSlot, price, } = location.state || {}; // Extract state from location
+  const {username, serviceId}= useParams();
+console.log(username);
+console.log(serviceId);
+
+
+  
 console.log(location.state);
 
   const [mobileNumber, setMobileNumber] = useState("");
@@ -63,6 +69,10 @@ console.log(location.state);
           const verification = await paymentApi.verifyPayment(response);
           if (verification && verification.success) {
             alert("Payment Verified Successfully!");
+            const data={serviceId: serviceId}
+          const res= await bookService(data);
+          console.log(res);
+          
             navigate("/success", { state: { paymentData: response } });
           } else {
             alert("Payment verification failed!");
@@ -91,7 +101,11 @@ console.log(location.state);
       <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-lg">
         <h2 className="text-xl font-bold text-center text-gray-800">Confirm Your Payment</h2>
         <div className="mt-4 p-4 bg-blue-50 rounded-lg shadow-inner">
-          <p className="text-gray-700 font-medium">Date: {date}</p>
+          <p className="text-gray-700 font-medium">Date: {new Date(date).toLocaleDateString ("en-IN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  })}</p>
           <p className="text-gray-700 font-medium">Time Slot: {timeSlot}</p>
           <p className="text-gray-700 font-medium text-lg">Total Price: ₹{price}</p>
         </div>

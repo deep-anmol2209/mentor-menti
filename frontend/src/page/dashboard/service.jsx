@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Dashboard from "./dashboard";
 import ServiceCard from "../../components/ServiceCard";
 import service from "../../apiManager/service";
@@ -8,54 +8,58 @@ import { FiPlus } from "react-icons/fi";
 import useUserStore from "../../store/user";
 import dayjs from "dayjs";
 
-const Services = () => {
-  const [services, setServices] = useState([]); // State to hold services
-  const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
-  const [editingService, setEditingService] = useState(null); // State to track which service is being edited
-  const [loading, setLoading] = useState(true); // State to track loading status
-  const { setUser, user: mentorData } = useUserStore(); // To fecth mentor id from userState
+const { Option } = Select;
+const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-  const { Option } = Select;
-  // const { RangePicker } = DatePicker;
+const Services = () => {
+  const [services, setServices] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingService, setEditingService] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { user: mentorData } = useUserStore();
   const [form] = Form.useForm();
   const courseType = Form.useWatch("courseType", form);
 
-  const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const fetchServices = useCallback(async () => {
+    setLoading(true);
+    try {
+      const mentorId = mentorData?._id;
+      if (!mentorId) {
+        toast.error("Mentor ID is missing. Please login again.");
+        return;
+      }
+      const response = await service.getServicesByMentor(mentorId);
+      setServices(response?.data?.service || []);
+    } catch (error) {
+      console.error("Error fetching mentor services:", error);
+      toast.error("Failed to load services. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  }, [mentorData]);
 
   useEffect(() => {
-    const fetchServices = async () => {
-      setLoading(true);
-      try {
-        const mentorId = mentorData._id;
-        if (!mentorId) {
-          toast.error("Mentor ID is missing. Please login again.");
-          return;
-        }
-        const response = await service.getServicesByMentor(mentorId);
-        setServices(response?.data?.service || []);
-      } catch (error) {
-        console.error("Error fetching mentor services:", error);
-        toast.error("Failed to load services. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchServices();
-  }, []);
+  }, [fetchServices]);
 
   useEffect(() => {
     if (isModalVisible) {
       if (editingService) {
         const { active, availability = [], fixedStartTime, fixedEndTime, fromDate, toDate, ...rest } = editingService;
+        
+        // Transform availability for form
+        const formAvailability = availability.flatMap(dateSlot => 
+          dateSlot.timeSlots?.map(timeSlot => ({
+            date: dateSlot.date ? dayjs(dateSlot.date) : null,
+            startTime: timeSlot.startTime ? dayjs(timeSlot.startTime, "HH:mm") : null,
+            endTime: timeSlot.endTime ? dayjs(timeSlot.endTime, "HH:mm") : null
+          })) || []
+        );
 
         form.setFieldsValue({
           ...rest,
           active: String(active),
-          availability: availability.map((slot) => ({
-            ...slot,
-            startTime: slot.startTime ? dayjs(slot.startTime, "HH:mm") : null,
-            endTime: slot.endTime ? dayjs(slot.endTime, "HH:mm") : null,
-          })),
+          availability: formAvailability,
           fixedStartTime: fixedStartTime ? dayjs(fixedStartTime, "HH:mm") : null,
           fixedEndTime: fixedEndTime ? dayjs(fixedEndTime, "HH:mm") : null,
           fromDate: fromDate ? dayjs(fromDate, "YYYY-MM-DD") : null,
@@ -67,149 +71,94 @@ const Services = () => {
     }
   }, [editingService, form, isModalVisible]);
 
-  const convertToAvailabilityObject = (slots) => {
-    return slots.reduce((acc, { day, startTime, endTime }) => {
-      if (!acc[day]) {
-        acc[day] = [];
+  const formatFormValues = useCallback((values) => {
+    const formattedValues = { ...values };
+    formattedValues.mentor = mentorData._id;
+
+    if (formattedValues.courseType === "fixed-course") {
+      delete formattedValues.availability;
+      
+      // Format fixed course dates
+      if (formattedValues.fromDate) {
+        formattedValues.fromDate = formattedValues.fromDate.format("YYYY-MM-DD");
       }
-      acc[day].push({ startTime, endTime });
-      return acc;
-    }, {});
-  };
+      if (formattedValues.toDate) {
+        formattedValues.toDate = formattedValues.toDate.format("YYYY-MM-DD");
+      }
+      if (formattedValues.fixedStartTime) {
+        formattedValues.fixedStartTime = formattedValues.fixedStartTime.format("HH:mm");
+      }
+      if (formattedValues.fixedEndTime) {
+        formattedValues.fixedEndTime = formattedValues.fixedEndTime.format("HH:mm");
+      }
+    } 
+    else if (formattedValues.courseType === "one-on-one") {
+      delete formattedValues.fromDate;
+      delete formattedValues.toDate;
+      delete formattedValues.fixedDays;
+      delete formattedValues.fixedStartTime;
+      delete formattedValues.fixedEndTime;
 
-  const formatFormValues = (values) => {
-    if (values.courseType === "fixed-course") {
-      // ignore availability
-      delete values.availability;
-    } else if (values.courseType === "one-on-one") {
-      // ignore fixed-course fields
-      delete values.fromDate;
-      delete values.toDate;
-      delete values.fixedDays;
-      delete values.fixedStartTime;
-      delete values.fixedEndTime;
+      // Format availability for one-on-one
+      if (formattedValues.availability) {
+        formattedValues.availability = formattedValues.availability
+          .filter(slot => slot.date && slot.startTime && slot.endTime)
+          .map(slot => ({
+            date: slot.date.format("YYYY-MM-DD"),
+            timeSlots: [{
+              startTime: slot.startTime.format("HH:mm"),
+              endTime: slot.endTime.format("HH:mm")
+            }]
+          }));
+      }
     }
 
-    if (values.availability) {
-      values.availability = values.availability.map((slot) => ({
-        ...slot,
-        startTime: slot.startTime.format("HH:mm"),
-        endTime: slot.endTime.format("HH:mm"),
-      }));
-    }
+    formattedValues.active = formattedValues.active === "true";
+    return formattedValues;
+  }, [mentorData]);
 
-    if (values.fixedStartTime) {
-      values.fixedStartTime = values.fixedStartTime.format("HH:mm");
-    }
-
-    if (values.fixedEndTime) {
-      values.fixedEndTime = values.fixedEndTime.format("HH:mm");
-    }
-    console.log(values);
-    
-
-    const rawSlots = values.availability.map((slot) => ({
-      day: slot.day,
-      startTime: slot.startTime,
-      endTime: slot.endTime,
-    }));
-
-    const formattedAvailability = convertToAvailabilityObject(rawSlots);
-    values.availability = formattedAvailability;
-    console.log(values);
-
-    return values;
-  };
-
-  // Handle creating a new service
-  const handleCreateService = async (values) => {
+  const handleServiceSubmit = useCallback(async (values) => {
     setLoading(true);
-    setEditingService(null);
-
-    const formattedValues = formatFormValues(values);
-
     try {
-      const response = await service.createService(formattedValues);
-      setServices((prevServices) => [...prevServices, response?.data?.service]);
+      const formattedValues = formatFormValues(values);
+      const isEditing = Boolean(editingService);
+
+      // Validate based on course type
+      if (formattedValues.courseType === "one-on-one" && 
+          (!formattedValues.availability || formattedValues.availability.length === 0)) {
+        throw new Error("Please add at least one availability slot for one-on-one courses");
+      }
+
+      if (isEditing) {
+        const response = await service.editService(editingService._id, formattedValues);
+        setServices(prev => prev.map(s => s._id === editingService._id ? response?.data?.service : s));
+        toast.success("Service updated successfully!");
+      } else {
+        const response = await service.createService(formattedValues);
+        setServices(prev => [...prev, response?.data?.service]);
+        toast.success("Service created successfully!");
+      }
+
       setIsModalVisible(false);
-      toast.success("Service created successfully!");
+      setEditingService(null);
     } catch (error) {
-      console.error("Error creating service:", error);
-      toast.error("Failed to create service. Please try again.");
+      console.error(`Error ${editingService ? 'editing' : 'creating'} service:`, error);
+      toast.error(error.message || `Failed to ${editingService ? 'update' : 'create'} service. Please try again.`);
     } finally {
       setLoading(false);
     }
-  };
+  }, [editingService, formatFormValues]);
 
-  // Handle editing an existing service
-  const handleEditService = async (values) => {
-    setLoading(true);
-    const serviceId = editingService?._id;
-
-    const formattedValues = formatFormValues(values);
-
-    // if (values.courseType === "fixed-course") {
-    //   // ignore availability
-    //   delete values.availability;
-    // } else if (values.courseType === "one-on-one") {
-    //   // ignore fixed-course fields
-    //   delete values.fromDate;
-    //   delete values.toDate;
-    //   delete values.fixedDays;
-    //   delete values.fixedStartTime;
-    //   delete values.fixedEndTime;
-    // }
-    // console.log(values);
-
-    // if (values.availability) {
-    //   values.availability = values.availability.map(slot => ({
-    //     ...slot,
-    //     startTime: slot.startTime.format("HH:mm"),
-    //     endTime: slot.endTime.format("HH:mm"),
-    //   }));
-    // }
-
-    // if (values.fixedStartTime) {
-    //   values.fixedStartTime = values.fixedStartTime.format("HH:mm");
-    // }
-
-    // if (values.fixedEndTime) {
-    //   values.fixedEndTime = values.fixedEndTime.format("HH:mm");
-    // }
-
-    try {
-      const response = await service.editService(serviceId, formattedValues);
-
-      setServices((prevServices) => prevServices.map((service) => (service._id === serviceId ? response?.data?.service : service)));
-
-      setIsModalVisible(false);
-      toast.success("Service updated successfully!");
-    } catch (error) {
-      console.error("Error editing service:", error);
-      toast.error("Failed to update service. Please try again.");
-    } finally {
-      setEditingService(null); // Move this here after update
-      setLoading(false);
-    }
-  };
-
-  // Handle opening the modal for editing a service
-  const handleEdit = (service) => {
+  const handleEdit = useCallback((service) => {
     setEditingService(service);
     setIsModalVisible(true);
-  };
+  }, []);
 
-  const onServiceStatus = (value) => {
-    switch (value) {
-      case "true":
-        form.setFieldsValue({ note: "Service Active" });
-        break;
-      case "false":
-        form.setFieldsValue({ note: "Service Disabled" });
-        break;
-      default:
-    }
-  };
+  const closeModal = useCallback(() => {
+    form.resetFields();
+    setEditingService(null);
+    setIsModalVisible(false);
+  }, [form]);
 
   return (
     <Dashboard>
@@ -219,27 +168,25 @@ const Services = () => {
           <Button
             type='primary'
             onClick={() => setIsModalVisible(true)}
+            icon={<FiPlus className='inline-block mr-2' />}
           >
-            <FiPlus className='inline-block mr-2' /> Add New
+            Add New
           </Button>
         </div>
 
-        {/* Modal for creating or editing services */}
         <Modal
           title={editingService ? "Edit Service" : "Create New Service"}
           open={isModalVisible}
-          onCancel={() => {
-            form.resetFields();
-            setEditingService(null);
-            setIsModalVisible(false);
-          }}
+          onCancel={closeModal}
           footer={null}
+          width={800}
+          destroyOnClose
         >
           <Form
             form={form}
-            onFinish={editingService ? handleEditService : handleCreateService}
+            onFinish={handleServiceSubmit}
+            layout="vertical"
           >
-            {/* Service name block */}
             <Form.Item
               label='Service Name'
               name='serviceName'
@@ -248,29 +195,26 @@ const Services = () => {
               <Input />
             </Form.Item>
 
-            {/* Description block */}
             <Form.Item
               label='Description'
               name='description'
               rules={[{ required: true, message: "Please enter the service description!" }]}
             >
-              <Input.TextArea />
+              <Input.TextArea rows={4} />
             </Form.Item>
 
-            {/* Duration block */}
             <Form.Item
-              label='Duration (mins)'
+              label='Duration (minutes)'
               name='duration'
               rules={[{ required: true, message: "Please enter the service duration!" }]}
             >
-              <Input type='number' />
+              <Input type='number' min={1} />
             </Form.Item>
 
-            {/* Course type block */}
             <Form.Item
               name='courseType'
               label='Course Type'
-              rules={[{ required: true, message: "Please select any one course type!" }]}
+              rules={[{ required: true, message: "Please select a course type!" }]}
             >
               <Select placeholder='Select course type'>
                 <Option value='one-on-one'>One-on-One</Option>
@@ -278,146 +222,151 @@ const Services = () => {
               </Select>
             </Form.Item>
 
-            {/* Price block */}
             <Form.Item
               label='Price (INR)'
               name='price'
               rules={[{ required: true, message: "Please enter the service price!" }]}
             >
-              <Input type='number' />
+              <Input type='number' min={0} />
             </Form.Item>
 
-            {/* Status block */}
             <Form.Item
               name='active'
               label='Status'
+              initialValue="true"
             >
-              <Select
-                placeholder='Select service status (Active/Disabled)'
-                onChange={onServiceStatus}
-              >
+              <Select placeholder='Select service status'>
                 <Option value='true'>Active</Option>
-                <Option value='false'>Disable</Option>
+                <Option value='false'>Disabled</Option>
               </Select>
             </Form.Item>
 
-            {/* Availabilitiy block - One-on-One */}
             {courseType === "one-on-one" && (
-              <>
-                <Form.List name='availability'>
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ key, name }) => (
-                        <div
-                          key={key}
-                          style={{ display: "flex", gap: "0.5rem" }}
+              <Form.List name='availability'>
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => (
+                      <div
+                        key={key}
+                        className="flex gap-2 mb-2 items-end"
+                      >
+                        <Form.Item
+                          {...restField}
+                          name={[name, "date"]}
+                          label="Date"
+                          className="flex-1"
+                          rules={[{ required: true, message: 'Select date' }]}
                         >
-                          <Form.Item name={[name, "day"]}>
-                            <Select
-                              placeholder='Select day'
-                              style={{ width: 120 }}
-                            >
-                              {daysOfWeek.map((day) => (
-                                <Option
-                                  key={day}
-                                  value={day}
-                                >
-                                  {day}
-                                </Option>
-                              ))}
-                            </Select>
-                          </Form.Item>
-                          <Form.Item name={[name, "startTime"]}>
-                            <TimePicker format='HH:mm' />
-                          </Form.Item>
-                          <Form.Item name={[name, "endTime"]}>
-                            <TimePicker format='HH:mm' />
-                          </Form.Item>
-                          <Button
-                            onClick={() => remove(name)}
-                            danger
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      ))}
-                      <Form.Item>
+                          <DatePicker className="w-full" />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "startTime"]}
+                          label="Start Time"
+                          className="flex-1"
+                          rules={[{ required: true, message: 'Select start time' }]}
+                        >
+                          <TimePicker format='HH:mm' minuteStep={15} className="w-full" />
+                        </Form.Item>
+                        <Form.Item
+                          {...restField}
+                          name={[name, "endTime"]}
+                          label="End Time"
+                          className="flex-1"
+                          rules={[{ required: true, message: 'Select end time' }]}
+                        >
+                          <TimePicker format='HH:mm' minuteStep={15} className="w-full" />
+                        </Form.Item>
                         <Button
-                          type='dashed'
-                          onClick={() => add()}
-                          block
+                          onClick={() => remove(name)}
+                          danger
+                          className="mb-7"
                         >
-                          Add Time Slot
+                          Remove
                         </Button>
-                      </Form.Item>
-                    </>
-                  )}
-                </Form.List>
-              </>
+                      </div>
+                    ))}
+                    <Form.Item>
+                      <Button
+                        type='dashed'
+                        onClick={() => add()}
+                        block
+                        icon={<FiPlus />}
+                      >
+                        Add Availability Slot
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
             )}
 
-            {/* Fixed course */}
             {courseType === "fixed-course" && (
               <>
-                <Form.Item
-                  name='fromDate'
-                  label='From Date'
-                >
-                  <DatePicker />
-                </Form.Item>
-                <Form.Item
-                  name='toDate'
-                  label='To Date'
-                >
-                  <DatePicker />
-                </Form.Item>
+                <div className="grid grid-cols-2 gap-4">
+                  <Form.Item
+                    name='fromDate'
+                    label='Start Date'
+                    rules={[{ required: true, message: 'Please select start date' }]}
+                  >
+                    <DatePicker className="w-full" />
+                  </Form.Item>
+                  <Form.Item
+                    name='toDate'
+                    label='End Date'
+                    rules={[{ required: true, message: 'Please select end date' }]}
+                  >
+                    <DatePicker className="w-full" />
+                  </Form.Item>
+                </div>
                 <Form.Item
                   name='fixedDays'
                   label='Days of the Week'
+                  rules={[{ required: true, message: 'Please select at least one day' }]}
                 >
                   <Select
                     mode='multiple'
                     placeholder='Select days'
                   >
-                    {daysOfWeek.map((day) => (
-                      <Option
-                        key={day}
-                        value={day}
-                      >
-                        {day}
-                      </Option>
+                    {daysOfWeek.map(day => (
+                      <Option key={day} value={day}>{day}</Option>
                     ))}
                   </Select>
                 </Form.Item>
-                <Form.Item
-                  name='fixedStartTime'
-                  label='Start Time'
-                >
-                  <TimePicker format='HH:mm' />
-                </Form.Item>
-                <Form.Item
-                  name='fixedEndTime'
-                  label='End Time'
-                >
-                  <TimePicker format='HH:mm' />
-                </Form.Item>
+                <div className="grid grid-cols-2 gap-4">
+                  <Form.Item
+                    name='fixedStartTime'
+                    label='Start Time'
+                    rules={[{ required: true, message: 'Please select start time' }]}
+                  >
+                    <TimePicker format='HH:mm' minuteStep={15} className="w-full" />
+                  </Form.Item>
+                  <Form.Item
+                    name='fixedEndTime'
+                    label='End Time'
+                    rules={[{ required: true, message: 'Please select end time' }]}
+                  >
+                    <TimePicker format='HH:mm' minuteStep={15} className="w-full" />
+                  </Form.Item>
+                </div>
               </>
             )}
 
             <Button
               type='primary'
               htmlType='submit'
+              loading={loading}
+              block
+              size="large"
             >
               {editingService ? "Save Changes" : "Create Service"}
             </Button>
           </Form>
         </Modal>
 
-        {/* Spinner to show loading status */}
         <Spin spinning={loading}>
           <div className='grid grid-cols-1 gap-6 mt-6 md:grid-cols-1 lg:grid-cols-2'>
-            {/* Display the list of services */}
-            {services?.map((service) => (
+            {services.map((service) => (
               <ServiceCard
                 key={service._id}
                 service={service}

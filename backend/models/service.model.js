@@ -12,15 +12,14 @@ const TimeSlotSchema = new Schema({
   },
 });
 
-const AvailabilitySchema = new Schema({
-  Sunday: [TimeSlotSchema],
-  Monday: [TimeSlotSchema],
-  Tuesday: [TimeSlotSchema],
-  Wednesday: [TimeSlotSchema],
-  Thursday: [TimeSlotSchema],
-  Friday: [TimeSlotSchema],
-  Saturday: [TimeSlotSchema],
+const DateBasedAvailabilitySchema = new Schema({
+  date: {
+    type: Date,
+    required: true,
+  },
+  timeSlots: [TimeSlotSchema],
 });
+
 
 const serviceSchema = new Schema(
   {
@@ -58,7 +57,7 @@ const serviceSchema = new Schema(
       default: true,
     },
     // === For one-on-one sessions ===
-    availability: AvailabilitySchema,
+    availability: [DateBasedAvailabilitySchema],
 
     // === For fixed courses ===
     fromDate: Date,

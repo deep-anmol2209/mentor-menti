@@ -16,6 +16,11 @@ const updateBookingById = async(bookingId, bookingData)=>{
     });
 };
 
+const isSlotAlreadyBooked = async ({ mentor, dateAndTime }) => {
+    const existing = await BookingModel.findOne({ mentor, dateAndTime });
+    return !!existing; // returns true if a booking already exists
+  };
+
 const getUsersBooking = async(userId) =>{
     return await BookingModel.find({user:userId});
 };
@@ -29,5 +34,6 @@ module.exports = {
      getBookingById,
      updateBookingById,
      getUsersBooking,
-     getMentorBookings
+     getMentorBookings,
+     isSlotAlreadyBooked
 }

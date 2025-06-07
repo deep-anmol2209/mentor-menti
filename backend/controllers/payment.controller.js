@@ -1,7 +1,7 @@
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 require("dotenv").config();
-
+const {getZoomAccessToken} =require('../services/zoom.service')
 
 const razorpayInstance = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,

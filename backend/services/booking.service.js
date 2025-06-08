@@ -18,63 +18,50 @@ const updateBookingById = async(bookingId, bookingData)=>{
 
 const isSlotAlreadyBooked = async ({ mentor, bookingDate, startTime, endTime }) => {
     try {
-        // Convert bookingDate to start and end of day in UTC
-        const bookingDay = new Date(bookingDate);
-        const startOfDay = new Date(bookingDay);
+        const startOfDay = new Date(bookingDate);
         startOfDay.setUTCHours(0, 0, 0, 0);
         
         const endOfDay = new Date(startOfDay);
         endOfDay.setUTCDate(startOfDay.getUTCDate() + 1);
 
-        // Find any overlapping bookings
-        const existingBooking = await BookingModel.findOne({
-            mentor: mentor,
-            bookingDate: {
-                $gte: startOfDay,
-                $lt: endOfDay
-            },
-            status: { $ne: 'cancelled' }, // Ignore cancelled bookings
+        return await BookingModel.exists({
+            mentor,
+            serviceType: 'one-on-one',
+            status: { $ne: 'cancelled' },
+            bookingDate: { $gte: startOfDay, $lt: endOfDay },
             $or: [
-                // Case 1: Existing booking starts before and ends after our requested start
-                { 
-                    $and: [
-                        { startTime: { $lt: endTime } },
-                        { endTime: { $gt: startTime } }
-                    ]
-                },
-                // Case 2: Existing booking completely within requested time
-                { 
-                    $and: [
-                        { startTime: { $gte: startTime } },
-                        { endTime: { $lte: endTime } }
-                    ]
-                },
-                // Case 3: Requested time completely within existing booking
-                { 
-                    $and: [
-                        { startTime: { $lte: startTime } },
-                        { endTime: { $gte: endTime } }
-                    ]
-                }
+                { startTime: { $lt: endTime }, endTime: { $gt: startTime } },
+                { startTime: { $gte: startTime }, endTime: { $lte: endTime } },
+                { startTime: { $lte: startTime }, endTime: { $gte: endTime } }
             ]
         });
-
-        if (existingBooking) {
-            console.log('Found conflicting booking:', {
-                existingStart: existingBooking.startTime,
-                existingEnd: existingBooking.endTime,
-                requestedStart: startTime,
-                requestedEnd: endTime
-            });
-        }
-
-        return !!existingBooking;
     } catch (error) {
         console.error('Error checking slot availability:', error);
-        // Return true on error to be safe (prevent double booking)
-        return true;
+        return true; // Fail safe
     }
 };
+
+
+
+function generateCourseDates(service) {
+    const dates = [];
+    const current = new Date(service.fromDate);
+    const end = new Date(service.toDate);
+    
+    while (current <= end) {
+        if (service.fixedDays.includes(getDayName(current))) {
+            dates.push(new Date(current));
+        }
+        current.setDate(current.getDate() + 1);
+    }
+    
+    return dates;
+}
+
+function getDayName(date) {
+    return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 
+            'Thursday', 'Friday', 'Saturday'][date.getDay()];
+}
 
 const getUsersBooking = async(userId) =>{
     return await BookingModel.find({user:userId});
@@ -90,5 +77,6 @@ module.exports = {
      updateBookingById,
      getUsersBooking,
      getMentorBookings,
-     isSlotAlreadyBooked
+     isSlotAlreadyBooked,
+     generateCourseDates
 }

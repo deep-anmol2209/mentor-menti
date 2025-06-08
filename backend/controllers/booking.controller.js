@@ -19,7 +19,7 @@ const initiateBookingAndPayment = async (req, res) => {
     // For one-on-one services, validate the time slot exists in mentor's availability
     if (service.courseType === "one-on-one") {
       const isSlotAvailable = await serviceService.isTimeSlotAvailable(
-        service.mentor,
+        service._id,
         bookingDate,
         startTime,
         endTime
@@ -34,14 +34,24 @@ const initiateBookingAndPayment = async (req, res) => {
     }
   
     // Check if slot is already booked
+    console.log({
+        mentor: service.mentor,
+        bookingDate,
+        startTime,
+        endTime
+      });
     const isSlotTaken = await bookingService.isSlotAlreadyBooked({
       mentor: service.mentor,
       bookingDate,
       startTime,
       endTime,
     });
+    console.log(isSlotTaken);
+    
   
     if (isSlotTaken) {
+        console.log('yes taken');
+        
       return res.status(httpStatus.badRequest).json({
         success: false,
         msg: "This slot is already booked. Please choose another time.",
@@ -60,6 +70,8 @@ const initiateBookingAndPayment = async (req, res) => {
         ? { bookingDate, startTime, endTime }
         : { sessionDate: bookingDate }), // For fixed courses
     });
+     console.log('creating');
+     
   
     res.status(httpStatus.created).json({
       success: true,
@@ -91,3 +103,4 @@ module.exports = {
     getBookings,
     getMentorBookings
 }
+

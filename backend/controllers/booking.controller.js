@@ -5,83 +5,71 @@ const serviceService = require('../services/service.service');
 const bookingService = require('../services/booking.service');
 
 const initiateBookingAndPayment = async (req, res) => {
-    const { bookingDate, startTime, endTime, serviceId, duration } = req.body;
+    const { bookingDate, serviceId } = req.body;
     const service = await serviceService.getServiceById(serviceId);
     
     if (!service) {
-        return res.status(httpStatus.badRequest).json({
-            success: false,
-            msg: "Service not found",
-        });
+        return res.status(400).json({ success: false, msg: "Service not found" });
     }
 
     // ONE-ON-ONE: Check slot availability and conflicts
     if (service.courseType === "one-on-one") {
-        const isSlotAvailable = await serviceService.isTimeSlotAvailable(
-            service._id, bookingDate, startTime, endTime
-        );
+        const { startTime, endTime } = req.body;
         
-        if (!isSlotAvailable) {
-            return res.status(httpStatus.badRequest).json({
-                success: false,
-                msg: "This time slot is not available for booking",
-            });
-        }
-
-        const isSlotTaken = await bookingService.isSlotAlreadyBooked({
+        // Existing slot availability checks...
+        const isSlotTaken = await BookingModel.exists({
             mentor: service.mentor,
-            bookingDate,
-            startTime,
-            endTime
+            serviceType: 'one-on-one',
+            status: { $ne: 'cancelled' },
+            bookingDate: new Date(bookingDate),
+            $or: [
+                { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
+            ]
         });
 
         if (isSlotTaken) {
-            return res.status(httpStatus.badRequest).json({
+            return res.status(400).json({
                 success: false,
-                msg: "This slot is already booked. Please choose another time.",
+                msg: "This slot is already booked"
             });
         }
     }
-
-    // FIXED COURSE: Just verify dates are within course range
-    if (service.courseType === "fixed-course") {
+    // FIXED COURSE: Just verify date is within course range
+    else {
         const bookingDateObj = new Date(bookingDate);
         if (bookingDateObj < new Date(service.fromDate) || 
             bookingDateObj > new Date(service.toDate)) {
-            return res.status(httpStatus.badRequest).json({
+            return res.status(400).json({
                 success: false,
-                msg: "Selected date is not within course dates",
+                msg: "Selected date not within course dates"
             });
         }
     }
 
     // Create booking
     const bookingData = {
+        user: req.user._id,
         mentor: service.mentor,
         service: serviceId,
         price: service.price,
-        duration,
+        duration: service.duration,
         serviceType: service.courseType,
-        status: 'pending'
+        status: 'pending',
+        ...(service.courseType === "one-on-one" ? {
+            bookingDate,
+            startTime: req.body.startTime,
+            endTime: req.body.endTime
+        } : {
+            sessionDate: bookingDate,
+            isFixedCourseSession: true
+        })
     };
 
-    if (service.courseType === "one-on-one") {
-        bookingData.user = req.user._id;
-        bookingData.bookingDate = bookingDate;
-        bookingData.startTime = startTime;
-        bookingData.endTime = endTime;
-    } else {
-        // For fixed courses, add to users array
-        bookingData.users = [req.user._id];
-        bookingData.currentSessionDate = bookingDate;
-        bookingData.courseDates = bookingService.generateCourseDates(service); // Implement this
-    }
-
-    const newBooking = await bookingService.createBooking(bookingData);
+    const newBooking = await BookingModel.create(bookingData);
     
-    res.status(httpStatus.created).json({
+    res.status(201).json({
         success: true,
-        booking: newBooking,
+        booking: newBooking
     });
 };
 

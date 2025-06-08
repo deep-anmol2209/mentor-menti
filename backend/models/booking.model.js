@@ -8,15 +8,11 @@ const bookingSchema = new Schema(
       ref: 'Service',
       required: true,
     },
-    user: {
+    user: {  // Single user reference for both types
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: function() { return this.serviceType === 'one-on-one'; }
+      required: true
     },
-    users: [{  // For fixed courses
-      type: Schema.Types.ObjectId,
-      ref: 'User'
-    }],
     mentor: {
       type: Schema.Types.ObjectId,
       ref: 'User',
@@ -28,8 +24,7 @@ const bookingSchema = new Schema(
     endTime: String,
     
     // For fixed courses
-    courseDates: [Date],  // All session dates
-    currentSessionDate: Date,  // The specific date being booked
+    sessionDate: Date,  // The specific date of attendance
     
     price: Number,
     meetingLink: String,
@@ -43,7 +38,12 @@ const bookingSchema = new Schema(
       enum: ['one-on-one', 'fixed-course'],
       required: true
     },
-    duration: Number
+    duration: Number,
+    // Additional flag for fixed courses if needed
+    isFixedCourseSession: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

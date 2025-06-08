@@ -1,5 +1,6 @@
 const Razorpay = require('razorpay');
 const config = require('../config');
+const BookingModel= require('../models/booking.model')
 const httpStatus = require('../util/httpStatus');
 const serviceService = require('../services/service.service');
 const bookingService = require('../services/booking.service');

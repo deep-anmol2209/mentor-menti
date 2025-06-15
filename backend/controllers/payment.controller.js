@@ -9,9 +9,12 @@ const razorpayInstance = new Razorpay({
 });
 const createOrder = async (req, res) => {
   try {
+    
+    console.log('create order: ',req.body);
+    
     const { amount, currency, name, description, bookingId} = req.body;
 
-    if (!amount || !currency || !name || !description) {
+    if (!amount || !currency || !name || !description || !bookingId) {
       return res.status(400).send({ success: false, msg: "Missing required fields" });
     }
 
@@ -27,7 +30,8 @@ const createOrder = async (req, res) => {
         bookingId
       }
     };
-
+ console.log(options);
+ 
     razorpayInstance.orders.create(options, (err, order) => {
       if (err) {
         console.error("Razorpay error:", err);

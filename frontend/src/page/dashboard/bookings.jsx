@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Table,Button,Spin} from 'antd';
 import Dashboard from './dashboard';
 import booking from '../../apiManager/booking';
+import moment from 'moment';
 
 const Bookings = () => {
 

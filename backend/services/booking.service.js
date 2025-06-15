@@ -10,11 +10,19 @@ const getBookingById = async(bookingId) => {
     .populate('user');
 };
 
-const updateBookingById = async(bookingId, bookingData)=>{
-    return await BookingModel.findByIdAndUpdate(bookingId,bookingData,{
-        new:true,
+const updateBookingById = async (bookingId, bookingData) => {
+    const update = { ...bookingData };
+  
+    // Automatically remove `expireAt` if status is updated and is not 'pending'
+    if (update.status && update.status !== 'pending') {
+      update.$unset = { expireAt: "" };
+    }
+  
+    return await BookingModel.findByIdAndUpdate(bookingId, update, {
+      new: true,
     });
-};
+  };
+  
 
 const isSlotAlreadyBooked = async ({ mentor, bookingDate, startTime, endTime }) => {
     try {

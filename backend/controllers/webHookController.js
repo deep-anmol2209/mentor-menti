@@ -31,7 +31,7 @@ console.log('meeting link: ', zoomMeeting);
       meetingLink: zoomMeeting,
       status: "confirmed",
     });
-    await updatedBooking.save();
+    
     await emailService.sendConfirmationMail(
       booking.user.email,
       booking.user.name,

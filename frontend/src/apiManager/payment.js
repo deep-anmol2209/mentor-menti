@@ -1,8 +1,9 @@
 import axios from "axios";
+import booking from "./booking";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/v1';
 
-const createOrder = async ({ amount, currency, name, description }) => {
+const createOrder = async ({ amount, currency, name, description, bookingId }) => {
     try {
         console.log(API_URL);
         
@@ -11,6 +12,7 @@ const createOrder = async ({ amount, currency, name, description }) => {
         currency,
         name,
         description,
+        bookingId
       });
       return response.data;
     } catch (error) {

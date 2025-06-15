@@ -13,4 +13,6 @@ router.get('/mentor', auth.protect, auth.restrictTo('mentor'), asyncHandler(book
 
 router.post('/initiate-booking', validate(initiateBookingValidation),auth.protect, asyncHandler(bookingController.initiateBookingAndPayment));
 
+router.get('/getBookings/:username', auth.protect, asyncHandler(bookingController.getBookingsByUsername))
+
 module.exports = router;

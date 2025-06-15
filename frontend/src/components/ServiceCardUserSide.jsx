@@ -100,8 +100,9 @@ const ServiceCardUserSide = ({ service, username, bookings }) => {
             endTime: slot.endTime,
             duration: service.duration,
             price: service.price,
-            bookingId: response.data.booking._id
-          }
+            
+          },
+          bookingId: response.data.booking._id
         }
 
       });
@@ -139,8 +140,9 @@ const ServiceCardUserSide = ({ service, username, bookings }) => {
             // endTime: slot.endTime,
             duration: service.duration,
             price: service.price,
-            bookingId: response.data.booking._id
-          }
+          
+          },
+          bookingId: response.data.booking._id
         }
 
       });

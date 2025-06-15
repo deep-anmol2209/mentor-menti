@@ -33,7 +33,8 @@ const createOrder = async (req, res) => {
         console.error("Razorpay error:", err);
         return res.status(400).send({ success: false, msg: "Something went wrong!" });
       }
-
+  console.log('create order: ', order);
+  
       res.status(200).send({
         success: true,
         msg: "Order Created",
@@ -59,6 +60,8 @@ const createOrder = async (req, res) => {
 
 
 const verifyPayment = (req,res) => {
+  console.log('verify payment');
+  
   const {razorpay_order_id, razorpay_signature, razorpay_payment_id }= req.body
   // const body = orderId + "|" + paymentId;
   const expectedSignature = crypto
@@ -69,6 +72,7 @@ const verifyPayment = (req,res) => {
   if (expectedSignature !== razorpay_signature) {
     return res.status(400).json({ success: false, msg: "transaction is not legit" });
   } 
+console.log('payment verified');
 
   res.status(200).json({success: true, order_id: razorpay_order_id, paymentId: razorpay_payment_id})
 

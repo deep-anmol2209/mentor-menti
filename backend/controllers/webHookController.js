@@ -13,6 +13,8 @@ const handleRazorpayWebhook = async (req, res, next) => {
   
   if (event === "order.paid") {
     const bookingId = req.body.payload.payment.entity.notes.bookingId;
+    console.log(bookingId);
+    
     const booking = await bookingService.getBookingById(bookingId);
     console.log(booking);
     console.log(booking.bookingDate);

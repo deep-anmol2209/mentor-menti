@@ -11,10 +11,12 @@ const getBookingById = async(bookingId) => {
 };
 
 const updateBookingById = async (bookingId, bookingData) => {
-    const update = { ...bookingData };
+    const update = {
+      $set: { ...bookingData }
+    };
   
-    // Automatically remove `expireAt` if status is updated and is not 'pending'
-    if (update.status && update.status !== 'pending') {
+    // Remove `expireAt` when status is no longer 'pending'
+    if (bookingData.status && bookingData.status !== 'pending') {
       update.$unset = { expireAt: "" };
     }
   
@@ -22,6 +24,7 @@ const updateBookingById = async (bookingId, bookingData) => {
       new: true,
     });
   };
+  
   
 
 const isSlotAlreadyBooked = async ({ mentor, bookingDate, startTime, endTime }) => {

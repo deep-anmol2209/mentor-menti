@@ -25,6 +25,7 @@ const handleRazorpayWebhook = async (req, res, next) => {
       booking.duration,
       booking.startTime
     );
+console.log('meeting link: ', zoomMeeting);
 
     await bookingService.updateBookingById(bookingId, {
       meetingLink: zoomMeeting,

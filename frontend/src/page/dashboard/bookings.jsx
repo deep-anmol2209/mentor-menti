@@ -13,6 +13,8 @@ const Bookings = () => {
   const fetchBookings = async () => {
     setLoading(true);
     const res = await booking.getMentorBookings();
+    console.log(res);
+    
     setBookings(res?.data?.bookings);
     setLoading(false);
   };

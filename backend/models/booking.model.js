@@ -44,14 +44,26 @@ const bookingSchema = new Schema(
       default: false
     },
   
-  createdAt: {
-    type: Date,
-    default: Date.now,
-    expires: 1800, // Auto-delete after 15 minutes if still pending
-  },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    expireAt: {
+      type: Date,
+      default: null, // Only set this if status is 'pending'
+    },
 }
 );
-bookingSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1800 });
+bookingSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
+
+bookingSchema.pre('save', function (next) {
+  if (this.status === 'pending') {
+    this.expireAt = new Date(Date.now() +  60 * 1000); // 30 minutes from now
+  } else {
+    this.expireAt = undefined; // Will not be deleted by TTL
+  }
+  next();
+});
 
 const BookingModel = mongoose.model('Booking', bookingSchema);
 

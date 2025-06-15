@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import serviceAPI from '../apiManager/service';
+import bookingApi from "../apiManager/booking"
 
 const BookingPages = () => {
   const { username, serviceId } = useParams();
   const navigate = useNavigate();
   const [availability, setAvailability] = useState([]);
-  const [service, setService] = useState({ price: 1, courseType: "one-on-one" });
+  // const [service, setService] = useState({ price: 1, courseType: "one-on-one" });
   const [loading, setLoading] = useState(true);
+const location= useLocation();
+
+const { 
+  service,
+  slotDetails
+} = location.state || {}; 
+console.log(location.state);
+console.log(service);
+// const {fromDate, startTime, courseType, duration, price, endTime }= service
+const {date, startTime, endTime= "", duration, price}= slotDetails
+
+
 
   useEffect(() => {
     const fetchServiceDetail = async () => {
@@ -25,17 +38,45 @@ const BookingPages = () => {
     fetchServiceDetail();
   }, [serviceId]);
 
-  const onBookSession = (date, startTime, endTime) => {
-    navigate(`/mentor/${username}/service/${serviceId}/payment`, {
-      state: {
-        date,
-        startTime,
-        endTime,
-        price: service?.price,
-        serviceType: service?.courseType,
-        duration: service?.duration,
-      },
-    });
+  const onBookSession = async() => {
+
+    try {
+      const bookingData = {
+        serviceId: serviceId,
+        ...(service.courseType === "one-on-one"
+          ? {
+              bookingDate: date,
+              startTime: startTime,
+              endTime: endTime,
+              duration: duration
+            }
+          : {
+              bookingDate: date,
+              duration:duration // for fixed courses
+            }),
+      };
+  
+      const response = await bookingApi.bookService(bookingData);
+console.log(response);
+
+      navigate(`/mentor/${username}/service/${serviceId}/payment`, {
+        state: {
+          service,
+          slotDetails: {
+            date: slot.date,
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            duration: service.duration,
+            price: service.price
+          }
+        }
+      });
+      return response;
+    } catch (error) {
+      console.error("Booking creation failed:", error);
+      throw error;
+    }
+  
   };
 
   if (loading) {

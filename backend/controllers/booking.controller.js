@@ -1,6 +1,6 @@
 const Razorpay = require('razorpay');
 const config = require('../config');
-const BookingModel= require('../models/booking.model')
+const BookingModel= require("../models/booking.model")
 const httpStatus = require('../util/httpStatus');
 const serviceService = require('../services/service.service');
 const bookingService = require('../services/booking.service');
@@ -61,7 +61,8 @@ const initiateBookingAndPayment = async (req, res) => {
             startTime: req.body.startTime,
             endTime: req.body.endTime
         } : {
-            sessionDate: bookingDate,
+            bookingDate,
+            startTime: req.body.startTime,
             isFixedCourseSession: true
         })
     };
@@ -92,10 +93,20 @@ const getMentorBookings = async(req,res)=>{
     });
 };
 
+const getBookingsByUsername= async(req, res)=>{
+const {username}= req.params
+    const bookings= await bookingService.getMentorBookingsByUsername(username);
+
+    res.status(httpStatus.ok).json({
+        success: true,
+        bookings
+    })
+}
+
 
 module.exports = {
     initiateBookingAndPayment,
     getBookings,
-    getMentorBookings
+    getMentorBookings,
+    getBookingsByUsername
 }
-

@@ -77,6 +77,7 @@ const Profile = () => {
       .join("");
     return `https://ui-avatars.com/api/?name=${initials}&background=random&color=fff&size=256`;
   };
+console.log(mentorData);
 
   return (
     <Dashboard>
@@ -126,7 +127,7 @@ const Profile = () => {
           <h3 className='text-2xl font-semibold text-center text-teal-700'>Connect with Me</h3>
           <div className='flex justify-center mt-4 space-x-6'>
             <a
-              href={mentorData?.social?.linkedin || "#"}
+              href={`https://${mentorData?.profile?.social?.linkedin}` || "#"}
               target='_blank'
               rel='noopener noreferrer'
               className='text-blue-600 hover:text-blue-800 transition-transform transform hover:scale-110'
@@ -134,7 +135,7 @@ const Profile = () => {
               <AiFillLinkedin className='text-4xl' />
             </a>
             <a
-              href={mentorData?.social?.github || "#"}
+              href={`https://${mentorData?.profile?.social?.github}` || "#"}
               target='_blank'
               rel='noopener noreferrer'
               className='text-gray-800 hover:text-gray-900 transition-transform transform hover:scale-110'
@@ -142,7 +143,7 @@ const Profile = () => {
               <AiFillGithub className='text-4xl' />
             </a>
             <a
-              href={mentorData?.social?.twitter || "#"}
+              href={`https://${mentorData?.profile?.social?.twitter}` || "#"}
               target='_blank'
               rel='noopener noreferrer'
               className='text-blue-400 hover:text-blue-500 transition-transform transform hover:scale-110'
@@ -150,7 +151,7 @@ const Profile = () => {
               <AiFillTwitterCircle className='text-4xl' />
             </a>
             <a
-              href={mentorData?.social?.facebook || "#"}
+              href={mentorData?.profile?.social?.facebook || "#"}
               target='_blank'
               rel='noopener noreferrer'
               className='text-blue-700 hover:text-blue-900 transition-transform transform hover:scale-110'
@@ -158,7 +159,7 @@ const Profile = () => {
               <AiFillFacebook className='text-4xl' />
             </a>
             <a
-              href={mentorData?.social?.instagram || "#"}
+              href={`https://${mentorData?.profile?.social?.instagram}` || "#"}
               target='_blank'
               rel='noopener noreferrer'
               className='text-pink-600 hover:text-pink-800 transition-transform transform hover:scale-110'

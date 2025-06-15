@@ -23,8 +23,7 @@ const bookingSchema = new Schema(
     startTime: String,
     endTime: String,
     
-    // For fixed courses
-    sessionDate: Date,  // The specific date of attendance
+    
     
     price: Number,
     meetingLink: String,
@@ -43,10 +42,16 @@ const bookingSchema = new Schema(
     isFixedCourseSession: {
       type: Boolean,
       default: false
-    }
+    },
+  
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    expires: 1800, // Auto-delete after 15 minutes if still pending
   },
-  { timestamps: true }
+}
 );
+bookingSchema.index({ createdAt: 1 }, { expireAfterSeconds: 1800 });
 
 const BookingModel = mongoose.model('Booking', bookingSchema);
 

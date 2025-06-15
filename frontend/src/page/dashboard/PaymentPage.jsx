@@ -9,14 +9,16 @@ const PaymentPage = () => {
   const { username, serviceId } = useParams();
   
   const { 
-    date, 
-    startTime, 
-    endTime, 
-    price, 
-    serviceType = "one-on-one",
-    duration
+    service,
+    slotDetails,
+    bookingId
   } = location.state || {}; 
 console.log(location.state);
+console.log(service);
+// const {fromDate, startTime, courseType, duration, price, endTime }= service
+const {date, startTime, endTime= "", duration, price}= slotDetails
+
+
 
   const [mobileNumber, setMobileNumber] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -30,30 +32,6 @@ console.log(location.state);
     }
   }, []);
 
-  const handleCreateBooking = async (paymentResponse) => {
-    try {
-      const bookingData = {
-        serviceId: serviceId,
-        ...(serviceType === "one-on-one"
-          ? {
-              bookingDate: date,
-              startTime: startTime,
-              endTime: endTime,
-              duration: duration
-            }
-          : {
-              bookingDate: date,
-              duration: duration // for fixed courses
-            }),
-      };
-  
-      const response = await bookingApi.bookService(bookingData);
-      return response;
-    } catch (error) {
-      console.error("Booking creation failed:", error);
-      throw error;
-    }
-  };
   
 
   const handlePaymentProcess = async () => {
@@ -70,7 +48,8 @@ console.log(location.state);
         amount: price,
         currency: "INR",
         name: "EduHub Booking",
-        description: `Booking for ${new Date(date).toLocaleDateString()}`
+        description: `Booking for ${new Date(date).toLocaleDateString()}`,
+        bookingId
       });
   
       const options = {
@@ -89,7 +68,6 @@ console.log(location.state);
           try {
             // Send response to backend for signature verification
             await paymentApi.verifyPayment(response);
-            await handleCreateBooking(response);
   
             navigate("/booking-success", {
               state: {
@@ -123,21 +101,49 @@ console.log(location.state);
       <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-lg">
         <h2 className="text-xl font-bold text-center text-gray-800 mb-4">Confirm Your Payment</h2>
         
-        <div className="mt-4 p-4 bg-blue-50 rounded-lg shadow-inner">
-          <p className="text-gray-700 font-medium mb-2">
-            Date: {new Date(date).toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "long",
-              day: "numeric"
-            })}
-          </p>
-          <p className="text-gray-700 font-medium mb-2">
-            Time Slot: {startTime} - {endTime}
-          </p>
-          <p className="text-gray-700 font-medium text-lg">
-            Total Price: ₹{price}
-          </p>
-        </div>
+       
+
+        {
+              service.courseType=== "one-on-one"? (
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg shadow-inner">
+                <p className="text-gray-700 font-medium mb-2">
+
+            
+                Date: {new Date(date).toLocaleDateString("en-IN", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric"
+                })}
+              </p>
+              <p className="text-gray-700 font-medium mb-2">
+                Time Slot: {startTime} - {endTime}
+              </p>
+              <p className="text-gray-700 font-medium text-lg">
+                Total Price: ₹{price}
+              </p>
+              </div>
+              ) :(
+                <div className="mt-4 p-4 bg-blue-50 rounded-lg shadow-inner">
+                 <p className="text-gray-700 font-medium mb-2">
+
+            
+                Date: {new Date(date).toLocaleDateString("en-IN", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric"
+                })}
+              </p>
+              <p className="text-gray-700 font-medium mb-2">
+                Start time: {startTime} 
+              </p>
+              <p className="text-gray-700 font-medium text-lg">
+                Total Price: ₹{price}
+              </p>
+              </div>)
+            
+            }
+         
+        
 
         <div className="mt-4">
           <label className="block text-gray-600 font-medium mb-1">

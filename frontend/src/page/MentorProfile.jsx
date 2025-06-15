@@ -1,30 +1,56 @@
 import React, { useEffect, useState } from "react";
 import Nav from "@/components/Nav";
+import { Spin } from "antd";
 import { useParams } from "react-router-dom";
 import mentorApi from "@/apiManager/mentor";
+import bookingApi from "@/apiManager/booking";
 import { BiErrorAlt } from "react-icons/bi";
 import ServiceCardUserSide from "@/components/ServiceCardUserSide";
 
 const MentorProfile = () => {
   const { username } = useParams();
-  const [mentor, setMentor] = useState([]);
+  const [mentor, setMentor] = useState({});
   const [services, setServices] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchMentor = async () => {
       try {
-        const response = await mentorApi.getMentorsByUsername(username);
-        const mentorDetail = response?.data?.mentor || {};
-        const mentorService = response?.data?.services;
-        setServices(mentorService)
+        setLoading(true);
+        // Fetch mentor details and services
+        const mentorResponse = await mentorApi.getMentorsByUsername(username);
+        const mentorDetail = mentorResponse?.data?.mentor || {};
+        const mentorService = mentorResponse?.data?.services || [];
+        
+        // Fetch bookings for this mentor
+        const bookingsResponse = await bookingApi.getBookingsByUsername(username);
+        const mentorBookings = bookingsResponse?.data?.bookings || []; // Access the 'bookings' property
+        
+        setServices(mentorService);
         setMentor(mentorDetail);
+        setBookings(mentorBookings);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchMentor();
   }, [username]);
+
+  // Function to check if a time slot is booked
+  const isSlotBooked = (serviceId, date, startTime, endTime) => {
+    return bookings.some(booking => 
+      booking.service._id === serviceId &&
+      ((booking.serviceType === "one-on-one" && 
+        booking.bookingDate === date &&
+        booking.startTime === startTime &&
+        booking.endTime === endTime) ||
+       (booking.serviceType === "fixed-course" &&
+        new Date(booking.sessionDate).toISOString() === date))
+    );
+  };
 
 
   const socialLinks = [
@@ -127,13 +153,14 @@ const MentorProfile = () => {
               </div>
             ) : services.length > 0 ? (
               <div className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-                {services.map((service) => (
-                  <ServiceCardUserSide
-                    key={service?._id}
-                    service={service}
-                    username={mentor?.username || username} // Ensure username is always passed
-                  />
-                ))}
+                 {services.map((service) => (
+      <ServiceCardUserSide
+        key={service?._id}
+        service={service}
+        username={mentor?.username || username}
+        bookings={bookings} // Pass the bookings data
+      />
+    ))}
               </div>
             ) : (
               <div className='flex flex-col items-center justify-center h-full text-gray-700'>

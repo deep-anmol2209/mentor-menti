@@ -118,7 +118,7 @@ function Nav() {
                 size="large"
                 
               >
-                <button className='bg-teal-500 px-4 py-3 rounded-full hover:bg-teal-600 text-2xl text-white font-semibold'>{user.name.charAt(0).toUpperCase()}</button>
+                <button className='bg-teal-500 px-4 py-3 rounded-full hover:bg-teal-600 text-2xl text-white font-semibold w-[57px]'>{user.name.charAt(0).toUpperCase()}</button>
               </Dropdown>
             )}
 

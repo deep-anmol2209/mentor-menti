@@ -1,5 +1,5 @@
 const BookingModel = require('../models/booking.model');
-
+const UserModel= require('../models/user.model')
 const createBooking = async(bookingData)=>{
     return await BookingModel.create(bookingData);
 };
@@ -71,6 +71,16 @@ const getMentorBookings = async(mentorId)=>{
     return await BookingModel.find({mentor:mentorId});
 };
 
+const getMentorBookingsByUsername = async (username) => {
+    // First find the mentor by username (assuming you have access to MentorModel)
+    const mentor = await UserModel.findOne({ username });
+    if (!mentor) return [];
+    
+    // Then find all bookings for this mentor
+    return await BookingModel.find({ mentor: mentor._id })
+        .populate('service')
+        .populate('user');
+};
 module.exports = {
      createBooking,
      getBookingById,
@@ -78,5 +88,6 @@ module.exports = {
      getUsersBooking,
      getMentorBookings,
      isSlotAlreadyBooked,
-     generateCourseDates
+     generateCourseDates,
+     getMentorBookingsByUsername
 }

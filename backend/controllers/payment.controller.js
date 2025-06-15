@@ -9,7 +9,7 @@ const razorpayInstance = new Razorpay({
 });
 const createOrder = async (req, res) => {
   try {
-    const { amount, currency, name, description } = req.body;
+    const { amount, currency, name, description, bookingId} = req.body;
 
     if (!amount || !currency || !name || !description) {
       return res.status(400).send({ success: false, msg: "Missing required fields" });
@@ -23,7 +23,8 @@ const createOrder = async (req, res) => {
       receipt: `receipt_${new Date().getTime()}`,  // Unique receipt
       notes: {
         description,
-        name
+        name,
+        bookingId
       }
     };
 

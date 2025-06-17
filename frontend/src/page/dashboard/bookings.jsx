@@ -46,7 +46,7 @@ const Bookings = () => {
       
       console.log(activeTab);
       
-      return booking.status=== 'confirmed' || booking.status=== 'pending'; // Future bookings
+      return booking.status=== 'confirmed' || 'pending'; // Future bookings
     } else if (activeTab === "completed"){
       console.log(activeTab);
       

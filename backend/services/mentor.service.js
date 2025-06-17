@@ -1,5 +1,5 @@
 const UserModel = require("../models/user.model");
-const ServiceModel = require("../models/service.model");
+const {ServiceModel}= require("../models/service.model")
 
 const getAllMentors = async(skip,limit)=>{
     

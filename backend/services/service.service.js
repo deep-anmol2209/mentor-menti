@@ -1,4 +1,4 @@
-const ServiceModel = require("../models/service.model");
+const {ServiceModel} = require("../models/service.model");
 
 const createService = async(serviceData) =>{
     return await ServiceModel.create(serviceData);

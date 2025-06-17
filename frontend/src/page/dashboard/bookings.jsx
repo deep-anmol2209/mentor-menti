@@ -58,7 +58,7 @@ const Bookings = () => {
       return booking.status=== "rescheduled" || "reschedulerequest"
     }
   });
-console.log(filteredBookings);
+// console.log(filteredBookings);
 
 const formatFormValues = useCallback((values) => {
   console.log(values);

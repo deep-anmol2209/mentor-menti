@@ -46,8 +46,9 @@ const Bookings = () => {
       
       console.log(activeTab);
       
-      return booking.status=== 'confirmed' || 'pending'; // Future bookings
-    } else if (activeTab === "completed"){
+      return booking.status === 'confirmed' || booking.status === 'pending';
+
+    } else if (activeTab === "past"){
       console.log(activeTab);
       
       return booking.status=== "completed"; // Past bookings
@@ -55,7 +56,8 @@ const Bookings = () => {
     else{
       console.log(activeTab);
       
-      return booking.status=== "rescheduled" || "reschedulerequest"
+      return booking.status === 'rescheduled' || booking.status === 'reschedulerequest';
+
     }
   });
 // console.log(filteredBookings);

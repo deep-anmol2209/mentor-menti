@@ -42,11 +42,17 @@ const Bookings = () => {
   }, []);
   const filteredBookings = bookings.filter((booking) => {
     if (activeTab === "upcoming") {
+      console.log(activeTab);
+      
       return booking.status=== 'confirmed' || booking.status=== 'pending'; // Future bookings
     } else if (activeTab === "completed"){
+      console.log(activeTab);
+      
       return booking.status=== "completed"; // Past bookings
     }
     else{
+      console.log(activeTab);
+      
       return booking.status=== "rescheduled" || "reschedulerequest"
     }
   });

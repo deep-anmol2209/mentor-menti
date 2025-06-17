@@ -71,4 +71,6 @@ const serviceSchema = new Schema(
 
 const ServiceModel = model("Service", serviceSchema);
 
-module.exports = ServiceModel;
+module.exports = {ServiceModel,  TimeSlotModel: model("TimeSlot", TimeSlotSchema),
+  TimeSlotSchema,};
+

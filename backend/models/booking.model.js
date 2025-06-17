@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-
+const { TimeSlotSchema } = require("../models/service.model");
 const bookingSchema = new Schema(
   {
     service: {
@@ -29,7 +29,7 @@ const bookingSchema = new Schema(
     meetingLink: String,
     status: {
       type: String,
-      enum: ['pending', 'confirmed', 'cancelled', 'completed'],
+      enum: ['pending', 'confirmed', 'cancelled', 'completed', "rescheduled", "reschedulerequest"],
       default: 'pending',
     },
     serviceType: {
@@ -43,6 +43,19 @@ const bookingSchema = new Schema(
       type: Boolean,
       default: false
     },
+
+    // Reschedule related
+  rescheduleRequested: {
+    type: Boolean,
+    default: false,
+  },
+  rescheduleSlots: [{
+    date: {
+      type: Date,
+      required: true,
+    },
+    timeSlot: TimeSlotSchema, // ✅ Reusing imported TimeSlotSchema
+  }],
   
     createdAt: {
       type: Date,
@@ -58,7 +71,7 @@ bookingSchema.index({ expireAt: 1 }, { expireAfterSeconds: 0 });
 
 bookingSchema.pre('save', function (next) {
   if (this.status === 'pending') {
-    this.expireAt = new Date(Date.now() +  60 * 1000); // 30 minutes from now
+    this.expireAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
   } else {
     this.expireAt = undefined; // Will not be deleted by TTL
   }

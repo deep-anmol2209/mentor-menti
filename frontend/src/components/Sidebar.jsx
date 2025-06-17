@@ -112,11 +112,11 @@ const Sidebar = () => {
 
   const navItems = [
     { label: "Profile", path: "/dashboard/profile" },
+    { label: "Bookings", path: "/dashboard/bookings" },
     ...(user?.role === "mentor"
       ? [
           { label: "Services", path: "/dashboard/services" },
           { label: "Schedule", path: "/dashboard/schedule" },
-          { label: "Bookings", path: "/dashboard/bookings" },
           { label: "Payment", path: "/dashboard/payment" },
         ]
       : []),

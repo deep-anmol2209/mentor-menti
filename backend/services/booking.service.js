@@ -24,7 +24,8 @@ const updateBookingById = async (bookingId, bookingData) => {
       new: true,
     });
   };
-  
+
+
   
 
 const isSlotAlreadyBooked = async ({ mentor, bookingDate, startTime, endTime }) => {
@@ -92,6 +93,12 @@ const getMentorBookingsByUsername = async (username) => {
         .populate('service')
         .populate('user');
 };
+
+const rescheduleBooking= async (bookingId, bookingData)=>{
+    console.log("reschedule: ",bookingData);
+    
+return await BookingModel.findByIdAndUpdate(bookingId, {...bookingData}, {new: true})
+}
 module.exports = {
      createBooking,
      getBookingById,
@@ -100,5 +107,6 @@ module.exports = {
      getMentorBookings,
      isSlotAlreadyBooked,
      generateCourseDates,
-     getMentorBookingsByUsername
+     getMentorBookingsByUsername,
+     rescheduleBooking
 }

@@ -15,13 +15,23 @@ const getStudentBookings = async()=>{
 };
 
 const getBookingsByUsername = async(username)=>{
+    console.log(username);
+    
     return await AxiosInstances.get(`/booking/getBookings/${username}`)
+}
+
+const updateBooking= async(bookingData)=>{
+    console.log( bookingData);
+    
+    
+    return await AxiosInstances.post('/booking/updateBooking', bookingData)
 }
 
 export default {
     bookService,
     getMentorBookings,
     getStudentBookings,
-    getBookingsByUsername
+    getBookingsByUsername,
+    updateBooking
 }
 

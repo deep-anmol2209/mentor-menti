@@ -93,7 +93,7 @@ const getMentorBookings = async(req,res)=>{
     });
 };
 
-const getBookingsByUsername= async(req, res)=>{
+const getBookingsByUsername = async(req, res)=>{
 const {username}= req.params
     const bookings= await bookingService.getMentorBookingsByUsername(username);
 
@@ -103,10 +103,40 @@ const {username}= req.params
     })
 }
 
+const updateBookingById= async(req, res)=>{
+console.log('hello');
+
+    const bookingData= req.body;
+    console.log(bookingData);
+    const bookingId= bookingData._id
+   if(!bookingId){
+    return res.status(httpStatus.badRequest).json({
+        success: false,
+        message: "booking Id is missing"
+    })
+   }
+    const booking= await bookingService.rescheduleBooking(bookingId, bookingData);
+
+    if(!booking){
+        return res.status(httpStatus.notFound).json({
+         success: false,
+         message: "booking not found"
+        })
+    }
+
+    res.status(httpStatus.ok).json({
+        success: true,
+        booking
+    })
+}
+
 
 module.exports = {
     initiateBookingAndPayment,
     getBookings,
     getMentorBookings,
-    getBookingsByUsername
+    getBookingsByUsername,
+    updateBookingById
 }
+
+

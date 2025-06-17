@@ -3,7 +3,8 @@ const asyncHandler = require('../../helper/asyncHandler');
 const validate = require('../../middleware/validate');
 const auth = require('../../middleware/auth');
 const bookingController = require('../../controllers/booking.controller');
-const {initiateBookingValidation} = require('../../validations/booking.validation');
+const {initiateBookingValidation, updateBookingValidation} = require('../../validations/booking.validation');
+
 
 const router = express.Router();
 
@@ -14,5 +15,7 @@ router.get('/mentor', auth.protect, auth.restrictTo('mentor'), asyncHandler(book
 router.post('/initiate-booking', validate(initiateBookingValidation),auth.protect, asyncHandler(bookingController.initiateBookingAndPayment));
 
 router.get('/getBookings/:username', auth.protect, asyncHandler(bookingController.getBookingsByUsername))
+
+router.post('/updateBooking', auth.protect, validate(updateBookingValidation), asyncHandler(bookingController.updateBookingById))
 
 module.exports = router;

@@ -42,6 +42,8 @@ const Bookings = () => {
   }, []);
   const filteredBookings = bookings.filter((booking) => {
     if (activeTab === "upcoming") {
+      console.log("booking: ",booking);
+      
       console.log(activeTab);
       
       return booking.status=== 'confirmed' || booking.status=== 'pending'; // Future bookings

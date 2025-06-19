@@ -54,7 +54,7 @@ const bookingSchema = new Schema(
       type: Date,
       required: true,
     },
-    timeSlot: TimeSlotSchema, // ✅ Reusing imported TimeSlotSchema
+    timeSlot: [TimeSlotSchema], // ✅ Reusing imported TimeSlotSchema
   }],
   
     createdAt: {

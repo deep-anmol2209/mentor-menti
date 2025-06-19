@@ -127,6 +127,7 @@ console.log('hello');
     await emailService.sendRescheduleRequestMail(
         booking.user.email,
         booking.user.name,
+        'https://mentor-menti-uint.vercel.app/dashboard/bookings'
       );
     
     res.status(httpStatus.ok).json({

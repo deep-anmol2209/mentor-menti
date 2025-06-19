@@ -33,12 +33,13 @@ const sendConfirmationMail = async (to, name, meetingLink, date, time) => {
   return sendEmail(to, subject, data);
 };
 
-const sendRescheduleRequestMail = async (to, name) => {
+const sendRescheduleRequestMail = async (to, name, bookingPageUrl) => {
   const subject = "Reschedule Request";
 
   const template = path.join(__dirname, "../template/rescheduleRequest.ejs");
   const data = await ejs.renderFile(template, {
     name,
+    bookingPageUrl
   });
 
   return sendEmail(to, subject, data);

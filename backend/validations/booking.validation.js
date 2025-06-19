@@ -16,7 +16,7 @@ const timeSlotSchema = Joi.object({
 
 const rescheduleSlotSchema = Joi.object({
   date: Joi.date().iso().required(),  // e.g., "2025-06-19"
-  timeSlots: Joi.array().items(timeSlotSchema).required(),
+  timeSlot: Joi.array().items(timeSlotSchema).required(),
 });
 
 const updateBookingValidation = Joi.object({

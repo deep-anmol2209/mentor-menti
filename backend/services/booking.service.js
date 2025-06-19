@@ -99,6 +99,10 @@ const rescheduleBooking= async (bookingId, bookingData)=>{
     
 return await BookingModel.findByIdAndUpdate(bookingId, {...bookingData}, {new: true})
 }
+
+const findAndUpdateById= async(bookingId, bookingData)=>{
+    return await BookingModel.findByIdAndUpdate(bookingId, bookingData, {new: true})
+}
 module.exports = {
      createBooking,
      getBookingById,
@@ -108,5 +112,6 @@ module.exports = {
      isSlotAlreadyBooked,
      generateCourseDates,
      getMentorBookingsByUsername,
-     rescheduleBooking
+     rescheduleBooking,
+     findAndUpdateById
 }

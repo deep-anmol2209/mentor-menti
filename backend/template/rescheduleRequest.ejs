@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reschedule Request</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background-color: #ff9800;
+        color: #fff;
+        padding: 20px;
+        text-align: center;
+        font-size: 24px;
+      }
+      .content {
+        padding: 20px;
+      }
+      .content h2 {
+        color: #333;
+      }
+      .content p {
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 10px 20px;
+        background-color: #ff9800;
+        color: #fff;
+        text-decoration: none;
+        font-size: 16px;
+        border-radius: 5px;
+        text-align: center;
+      }
+      .btn:hover {
+        background-color: #f57c00;
+      }
+      .footer {
+        background-color: #f4f4f4;
+        padding: 10px;
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+      }
+      .footer a {
+        color: #ff9800;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">Reschedule Required</div>
+      <div class="content">
+        <h2>Hi <%= name %>,</h2>
+        <p>
+          We regret to inform you that your scheduled session cannot take place at the originally planned time because your mentor is currently unavailable.
+        </p>
+        <p>
+          But no worries! You can now choose a new time slot that works best for you.
+        </p>
+        <p>
+          Please visit the <strong>Reschedule Meeting</strong> section on the booking page to select a new available slot.
+        </p>
+        <p>Once selected, your meeting will be automatically rescheduled for that time.</p>
+        <a href="<%= https://mentor-menti-uint.vercel.app/dashboard/bookings %>" class="btn">Reschedule Now</a>
+        <p>If you need assistance or have any questions, feel free to contact us.</p>
+      </div>
+      <div class="footer">
+        <p>
+          Need help? <a href="mailto:support@example.com">Contact our support team</a>.
+        </p>
+        <p>We appreciate your understanding and flexibility!</p>
+      </div>
+    </div>
+  </body>
+</html>

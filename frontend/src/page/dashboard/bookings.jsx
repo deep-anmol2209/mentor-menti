@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Table,Button,  Input, Modal, Form, Spin, Select, DatePicker, TimePicker} from 'antd';
 import Dashboard from './dashboard';
+import { BiErrorAlt, BiCalendar, BiTime } from "react-icons/bi";
 import booking from '../../apiManager/booking';
 import useUserStore from '@/store/user';
 import moment from 'moment';
@@ -18,9 +19,12 @@ const Bookings = () => {
   
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isRescheduleModalVisible, setIsRescheduleModalVisible] = useState(false);
+  const [isNewSlotModalVisible, setIsNewSlotModalVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("upcoming"); // 'upcoming' or 'past'
   const [editBooking, setEditBooking]= useState()
+  const [availableSlots, setAvailableSlots] = useState([]);
+   const [loadingSlots, setLoadingSlots] = useState(false);
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -31,97 +35,153 @@ const Bookings = () => {
     setBookings(res?.data?.bookings);
     setLoading(false);
   };
+  
 
   useEffect(() => {
     fetchBookings();
   }, []);
 
   const closeModal = useCallback(() => {
-  
-    setIsModalVisible(false);
+  if(isRescheduleModalVisible){
+    setIsRescheduleModalVisible(false)
+  }else{
+    setIsNewSlotModalVisible(false)
+  }
+   
   }, []);
   const filteredBookings = bookings.filter((booking) => {
     if (activeTab === "upcoming") {
-      console.log("booking: ",booking);
-      
-      console.log(activeTab);
-      
-      return booking.status === 'confirmed' || booking.status === 'pending';
-
+      return booking.status=== 'confirmed' || booking.status=== 'pending'; // Future bookings
     } else if (activeTab === "past"){
-      console.log(activeTab);
-      
       return booking.status=== "completed"; // Past bookings
     }
     else{
-      console.log(activeTab);
-      
       return booking.status === 'rescheduled' || booking.status === 'reschedulerequest';
-
     }
   });
-// console.log(filteredBookings);
+console.log(filteredBookings);
+
+const fetchAvailableSlots = async (record) => {
+  setLoadingSlots(true);
+  try {
+    // Use the availability array from the service
+    console.log(record.rescheduleSlots);
+    
+    const slots = record.rescheduleSlots || [];
+    console.log(slots);
+    
+    // Format available slots
+    const formattedSlots = slots.flatMap(day =>
+      day.timeSlot.map(slot => ({
+        date: day.date,
+        startTime: slot.startTime,
+        endTime: slot.endTime
+      }))
+    );
+
+    setAvailableSlots(formattedSlots);
+  } catch (error) {
+    console.error("Error fetching slots:", error);
+  } finally {
+    setLoadingSlots(false);
+  }
+};
 
 const formatFormValues = useCallback((values) => {
-  console.log(values);
-  
   const formattedValues = { ...values };
   
-console.log(formattedValues);
-
-
-    // Format availability for one-on-one
-    if (formattedValues.availability) {
-      formattedValues.availability = formattedValues.availability
-        .filter(slot => slot.date && slot.startTime && slot.endTime)
-        .map(slot => ({
+  if (formattedValues.availability) {
+    formattedValues.availability = formattedValues.availability
+      .filter(slot => slot.date && slot.startTime && slot.endTime)
+      .map(slot => {
+        const { startTime, endTime } = slot;
+        return {
           date: slot.date.format("YYYY-MM-DD"),
-          timeSlots: [{
-            startTime: slot.startTime.format("HH:mm"),
-            endTime: slot.endTime.format("HH:mm")
+          timeSlot: [{
+            startTime: startTime.format("HH:mm"),
+            endTime: endTime.format("HH:mm")
           }]
-        }));
-    }
+        };
+      });
+  }
   
   return formattedValues;
 }, [bookings]);
 
-
+const handleSlotSelect = async (slot) => {
+  try {
+    const bookingData = {
+      bookingId: editBooking._id,  // Send bookingId in body instead of URL
+      bookingDate: slot.date,      // Modified fields
+      startTime: slot.startTime,
+      endTime: slot.endTime,
+      status: "rescheduled",
+    };
+    
+    // Send as PATCH with bookingId in body
+    const response = await booking.rescheduleBooking(bookingData);
+    toast.success("Rescheduled successfully!");
+    fetchBookings(); // Refresh bookings list
+    setIsRescheduleModalVisible(false);
+  } catch (error) {
+    toast.error(error.response?.data?.message || "Failed to reschedule");
+  }
+};
 const handleRecheduleSubmit = useCallback(async (values) => {
   setLoading(true);
   try {
     const formattedValues = formatFormValues(values);
     
-    if (!formattedValues.availability || formattedValues.availability.length === 0) {
-      throw new Error("Please add at least one availability slot for one-on-one courses");
+    if (!formattedValues.availability?.length) {
+      throw new Error("Please add at least one availability slot");
     }
 
-    if (!editBooking || !editBooking._id) {
-      toast.error("Booking information is missing");
-      return;
+    if (!editBooking?._id) {
+      throw new Error("Booking information is missing");
     }
+
+    // Check for time conflicts (similar to initiateBooking)
+    const conflictResponses = await Promise.all(
+      formattedValues.availability.map(async slot => {
+        return await booking.checkTimeConflict({
+          mentor: editBooking.mentor,
+          date: slot.date,
+          startTime: slot.timeSlot.startTime,
+          endTime: slot.timeSlot.endTime,
+          excludeBookingId: editBooking._id
+        });
+      })
+    );
+
+   // Extract just the conflict booleans
+   const hasConflicts = conflictResponses.some(response => response.conflict);
+
+   console.log('Conflict check results:', {
+     responses: conflictResponses,
+     hasConflicts
+   });
+
+   if (hasConflicts) {
+     throw new Error("One or more slots are already booked");
+   }
 
     const bookingData = {
-      ...editBooking, 
-      rescheduleSlots: formattedValues.availability, 
-      status: "reschedulerequest", 
+      ...editBooking,
+      rescheduleSlots: formattedValues.availability,
+      status: "reschedulerequest",
       rescheduleRequested: true
     };
-  
+
     const response = await booking.updateBooking(bookingData);
-    console.log(response);
-     
     toast.success("Reschedule request sent successfully!");
-    setIsModalVisible(false);
-    fetchBookings(); // Refresh the bookings list
+    setIsRescheduleModalVisible(false);
+    fetchBookings();
   } catch (error) {
-    console.error(`Error rescheduling booking: `, error);
-    toast.error(error.message || `Failed to reschedule. Please try again.`);
+    toast.error(error.message);
   } finally {
     setLoading(false);
   }
 }, [formatFormValues, editBooking]);
-
 
 
 const columns = [
@@ -157,34 +217,46 @@ const columns = [
   },
 ];
 
-// 🟧 Add this only if mentor
-if (user.role === 'mentor') {
+// Add Actions column conditionally
+if (user.role === 'mentor' || user.role === 'student') {
   columns.push({
     title: "Actions",
     key: "actions",
-    render: (_, record) => (
-      <div className="flex gap-2">
-        <Button
-          type="link"
-          onClick={() => handleOpenModal(record)}
-        >
-          Reschedule
-        </Button>
-        <Button
-          type="link"
-          danger
-          onClick={() => handleCancelBooking(record)}
-        >
-          Cancel
-        </Button>
-      </div>
-    )
+    render: (_, record) => {
+      // Show actions for:
+      // - All bookings if mentor
+      // - Only reschedulerequest bookings if student
+      if (user.role === 'mentor' || (user.role === 'student' && record.status === 'reschedulerequest')) {
+        return (
+          <div className="flex gap-2">
+            {user.role=== "mentor"? (<Button
+              type="link"
+              onClick={() => handleRescheduleModal(record)}
+            >
+             Reschedule
+            </Button>): (<Button
+              type="link"
+              onClick={() => handleNewSlotModal(record)}
+            >
+          select new slot
+            </Button>)}
+           
+            <Button
+              type="link"
+              danger
+              onClick={() => handleCancelBooking(record)}
+            >
+              Cancel
+            </Button>
+          </div>
+        );
+      }
+      return null; // Don't show actions for other student bookings
+    }
   });
 }
 
-const handleOpenModal = (record) => {
-  console.log(record);
-  // Convert the booking data to match the form structure
+const handleRescheduleModal = (record) => {
   const initialValues = {
     availability: [{
       date: moment(record.bookingDate),
@@ -195,8 +267,17 @@ const handleOpenModal = (record) => {
   
   setEditBooking(record);
   form.resetFields();
-  form.setFieldsValue(initialValues); // Set initial form values
-  setIsModalVisible(true);
+  form.setFieldsValue(initialValues);
+  setIsRescheduleModalVisible(true);
+};
+
+
+const handleNewSlotModal = (record) => {
+  
+  setEditBooking(record);
+  fetchAvailableSlots(record);
+  setIsNewSlotModalVisible(true);
+ 
 };
 
 const handleCancelBooking = async (booking) => {
@@ -297,7 +378,7 @@ const handleCancelBooking = async (booking) => {
         )}
 <Modal
           title={"Reschedule details"}
-          open={isModalVisible}
+          open={isRescheduleModalVisible}
           onCancel={closeModal}
           footer={null}
           width={800}
@@ -381,6 +462,59 @@ const handleCancelBooking = async (booking) => {
           </Form>
         </Modal>
 
+        <Modal
+        title={`Time Slots`}
+        open={isNewSlotModalVisible}
+        onCancel={closeModal}
+        footer={null}
+        width={800}
+      >
+          <div>
+            <h4 className="font-semibold mb-4">Select Available Time Slot</h4>
+
+        
+            {loadingSlots? (  <div className="flex justify-center">
+                <Spin />
+              </div>): availableSlots.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {availableSlots.map((slot, index) => {
+                  
+                  return (
+                    <div
+                      key={index}
+                      onClick={() => handleSlotSelect(slot)}
+                      className={`p-3 border rounded-lg cursor-pointer transition-colors 
+                        hover:bg-teal-50 hover:border-teal-300
+                        `}
+                    >
+                      <div className="flex items-center mb-1">
+                        <BiCalendar className="mr-2" />
+                        <span>{new Date(slot.date).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center">
+                        <BiTime className="mr-2" />
+                        <span>
+                          {slot.startTime} - {slot.endTime}
+                        </span>
+                      </div>
+                      
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <BiErrorAlt className="mx-auto text-4xl text-orange-500 mb-4" />
+                <p>No available slots for this service</p>
+              </div>
+            )}
+            
+              
+          </div>
+        
+         
+        
+      </Modal>
       </div>
       </Dashboard>
     </>

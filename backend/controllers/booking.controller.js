@@ -4,7 +4,7 @@ const BookingModel= require("../models/booking.model")
 const httpStatus = require('../util/httpStatus');
 const serviceService = require('../services/service.service');
 const bookingService = require('../services/booking.service');
-
+const emailService = require('../services/email.service')
 const initiateBookingAndPayment = async (req, res) => {
     const { bookingDate, serviceId } = req.body;
     const service = await serviceService.getServiceById(serviceId);
@@ -123,7 +123,12 @@ console.log('hello');
          message: "booking not found"
         })
     }
-
+   
+    await emailService.sendRescheduleRequestMail(
+        booking.user.email,
+        booking.user.name,
+      );
+    
     res.status(httpStatus.ok).json({
         success: true,
         booking
@@ -131,12 +136,75 @@ console.log('hello');
 }
 
 
+// In your booking controller
+const checkTimeConflict = async (req, res) => {
+    const { mentor, date, startTime, endTime, excludeBookingId } = req.body;
+    
+    const conflict = await BookingModel.exists({
+      _id: { $ne: excludeBookingId },
+      mentor,
+      status: { $nin: ['cancelled', 'completed'] },
+      $or: [
+        {
+          bookingDate: new Date(date),
+          $or: [
+            { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
+          ]
+        },
+        {
+          'rescheduleSlots.date': new Date(date),
+          'rescheduleSlots.timeSlot.startTime': { $lt: endTime },
+          'rescheduleSlots.timeSlot.endTime': { $gt: startTime }
+        }
+      ]
+    });
+  
+    res.json({ conflict: !!conflict });
+  };
+
+
+  const rescheduleBooking = async (req, res) => {
+    try {
+      const { bookingId, bookingDate, startTime, endTime, status } = req.body;
+  
+      // Validate required fields
+      if (!bookingId || !bookingDate || !startTime || !endTime) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+  
+      // Find and update the booking
+      const updatedBooking = await bookingService.findAndUpdateById(
+        bookingId,
+        {
+          bookingDate,
+          startTime,
+          endTime,
+          status: status || "rescheduled", 
+        },
+       
+      );
+  
+      if (!updatedBooking) {
+        return res.status(404).json({ message: "Booking not found" });
+      }
+  
+      res.status(200).json({
+        message: "Booking rescheduled successfully",
+        booking: updatedBooking,
+      });
+    } catch (error) {
+      console.error("Reschedule error:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  };
+
 module.exports = {
     initiateBookingAndPayment,
     getBookings,
     getMentorBookings,
     getBookingsByUsername,
-    updateBookingById
+    updateBookingById,
+    checkTimeConflict,
+    rescheduleBooking
 }
-
 

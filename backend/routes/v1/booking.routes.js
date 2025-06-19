@@ -18,4 +18,8 @@ router.get('/getBookings/:username', auth.protect, asyncHandler(bookingControlle
 
 router.post('/updateBooking', auth.protect, validate(updateBookingValidation), asyncHandler(bookingController.updateBookingById))
 
+router.post('/checkConflict', auth.protect,  asyncHandler(bookingController.checkTimeConflict));
+
+router.patch('/rescheduleSlot', auth.protect, asyncHandler(bookingController.rescheduleBooking))
+
 module.exports = router;

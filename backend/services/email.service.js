@@ -24,6 +24,7 @@ const sendConfirmationMail = async (to, name,status, meetingLink, date , time) =
 
   // Dynamically select template based on status
   let template ;
+console.log("status: ",status);
 
   if (status === "confirmed") {
      template = path.join(__dirname, `../template/confirmation.ejs` );

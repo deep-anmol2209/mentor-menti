@@ -189,6 +189,12 @@ const checkTimeConflict = async (req, res) => {
         return res.status(404).json({ message: "Booking not found" });
       }
   
+      await emailService.sendConfirmationMail(
+        updatedBooking.user.email,
+        updatedBooking.user.name,
+        updatedBooking.status,
+        updatedBooking.meetingLink
+      );
       res.status(200).json({
         message: "Booking rescheduled successfully",
         booking: updatedBooking,

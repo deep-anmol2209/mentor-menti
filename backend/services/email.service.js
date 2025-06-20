@@ -19,15 +19,26 @@ const sendEmail = async (to, subject, html) => {
   }
 };
 
-const sendConfirmationMail = async (to, name, meetingLink, date, time) => {
+const sendConfirmationMail = async (to, name,status, meetingLink, date , time) => {
   const subject = "Booking Confirmation";
 
-  const template = path.join(__dirname, "../template/confirmation.ejs");
+  // Dynamically select template based on status
+  let templateFile ;
+
+  if (status === "confirmed") {
+    templateFile = "confirmation.ejs";
+  } else if (status === "rescheduled") {
+    templateFile = "rescheduled.ejs";
+  }
+
+  const template = path.join(__dirname, "../template", templateFile);
+
   const data = await ejs.renderFile(template, {
     name,
     meetingLink,
     date,
     time,
+    status, // optional: if you want to use in the template
   });
 
   return sendEmail(to, subject, data);
@@ -44,6 +55,7 @@ const sendRescheduleRequestMail = async (to, name, bookingPageUrl) => {
 
   return sendEmail(to, subject, data);
 };
+
 
 module.exports = {
   sendConfirmationMail,

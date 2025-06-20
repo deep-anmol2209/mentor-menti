@@ -35,9 +35,10 @@ console.log('meeting link: ', zoomMeeting);
     await emailService.sendConfirmationMail(
       booking.user.email,
       booking.user.name,
+      booking.status,
       zoomMeeting,
-      moment(booking.dateAndTime).format("DD-MM-YYYY"),
-      moment(booking.dateAndTime).format("HH:mm")
+      moment(booking.bookingDate).format("DD-MM-YYYY"),
+      moment(booking.startTime).format("HH:mm")
     );
   }
   return res.status(httpStatus.ok).json({

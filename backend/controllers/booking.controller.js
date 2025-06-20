@@ -193,7 +193,10 @@ const checkTimeConflict = async (req, res) => {
         updatedBooking.user.email,
         updatedBooking.user.name,
         updatedBooking.status,
-        updatedBooking.meetingLink
+        updatedBooking.meetingLink,
+        moment(updatedBooking.bookingDate).format("DD-MM-YYYY"),
+        updatedBooking.startTime
+       
       );
       res.status(200).json({
         message: "Booking rescheduled successfully",

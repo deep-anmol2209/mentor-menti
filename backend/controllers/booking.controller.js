@@ -5,6 +5,7 @@ const httpStatus = require('../util/httpStatus');
 const serviceService = require('../services/service.service');
 const bookingService = require('../services/booking.service');
 const emailService = require('../services/email.service')
+const moment = require("moment")
 const initiateBookingAndPayment = async (req, res) => {
     const { bookingDate, serviceId } = req.body;
     const service = await serviceService.getServiceById(serviceId);

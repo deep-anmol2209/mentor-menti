@@ -23,15 +23,15 @@ const sendConfirmationMail = async (to, name,status, meetingLink, date , time) =
   const subject = "Booking Confirmation";
 
   // Dynamically select template based on status
-  let templateFile ;
+  let template ;
 
   if (status === "confirmed") {
-    templateFile = "confirmation.ejs";
+     template = path.join(__dirname, `../template/confirmation.ejs` );
   } else if (status === "rescheduled") {
-    templateFile = "rescheduled.ejs";
+     template = path.join(__dirname, `../template/rescheduled.ejs` );
   }
 
-  const template = path.join(__dirname, "../template", templateFile);
+  
 
   const data = await ejs.renderFile(template, {
     name,

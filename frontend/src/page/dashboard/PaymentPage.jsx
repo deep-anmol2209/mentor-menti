@@ -69,7 +69,7 @@ const {date, startTime, endTime= "", duration, price}= slotDetails
             // Send response to backend for signature verification
             await paymentApi.verifyPayment(response);
   
-            navigate("/booking-success", {
+            navigate("/dashboard/bookings", {
               state: {
                 bookingDetails: { date, startTime, endTime, price },
                 paymentId: response.razorpay_payment_id

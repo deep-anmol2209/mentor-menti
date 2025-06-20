@@ -101,7 +101,7 @@ return await BookingModel.findByIdAndUpdate(bookingId, {...bookingData}, {new: t
 }
 
 const findAndUpdateById= async(bookingId, bookingData)=>{
-    return await BookingModel.findByIdAndUpdate(bookingId, bookingData, {new: true})
+    return await BookingModel.findByIdAndUpdate(bookingId, bookingData, {new: true}).populate("user")
 }
 module.exports = {
      createBooking,

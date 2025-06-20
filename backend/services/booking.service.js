@@ -22,7 +22,7 @@ const updateBookingById = async (bookingId, bookingData) => {
   
     return await BookingModel.findByIdAndUpdate(bookingId, update, {
       new: true,
-    });
+    }).populate("user");
   };
 
 

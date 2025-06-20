@@ -27,10 +27,13 @@ const sendConfirmationMail = async (to, name,status, meetingLink, date , time) =
 
   if (status === "confirmed") {
      template = path.join(__dirname, `../template/confirmation.ejs` );
+     console.log("confirmed",template);
   } else if (status === "rescheduled") {
      template = path.join(__dirname, `../template/rescheduled.ejs` );
+     console.log("rescheduled",template);
   }
 
+  console.log(template);
   
 
   const data = await ejs.renderFile(template, {

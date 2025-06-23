@@ -15,9 +15,15 @@ const getPaymentsByMentorId = async (mentorId) => {
     try {
 
         const payments = await PaymentModel.find()
-            .populate("booking");
-        console.log(payments);
-        
+        .populate({
+          path: "booking",
+          populate: [
+            { path: "user" },
+            { path: "service" }
+          ]
+        });
+      console.log(payments);
+      
         // Filter out payments where booking is null (didn't match the mentorId)
         const filteredPayments = payments.filter(payment => payment.booking !== null);
         

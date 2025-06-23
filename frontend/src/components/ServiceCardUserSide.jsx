@@ -4,7 +4,7 @@ import { Button, Modal, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import bookingApi from "../apiManager/booking"
 import { LogIn } from "lucide-react";
-const ServiceCardUserSide = ({ service, username, bookings }) => {
+const ServiceCardUserSide = ({ service, username, bookings, mentor }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -100,9 +100,9 @@ const ServiceCardUserSide = ({ service, username, bookings }) => {
             endTime: slot.endTime,
             duration: service.duration,
             price: service.price,
-            
+            bookingId: response.data.booking._id
           },
-          bookingId: response.data.booking._id
+          mentor
         }
 
       });
@@ -140,9 +140,9 @@ const ServiceCardUserSide = ({ service, username, bookings }) => {
             // endTime: slot.endTime,
             duration: service.duration,
             price: service.price,
-          
+            bookingId: response.data.booking._id
           },
-          bookingId: response.data.booking._id
+          mentor
         }
 
       });

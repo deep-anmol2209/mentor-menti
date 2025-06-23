@@ -11,12 +11,12 @@ const PaymentPage = () => {
   const { 
     service,
     slotDetails,
-    bookingId
+    mentor
   } = location.state || {}; 
 console.log(location.state);
-console.log(service);
+console.log(mentor);
 // const {fromDate, startTime, courseType, duration, price, endTime }= service
-const {date, startTime, endTime= "", duration, price}= slotDetails
+const {date, startTime, endTime= "", duration, price, bookingId}= slotDetails
 
 
 
@@ -35,6 +35,8 @@ const {date, startTime, endTime= "", duration, price}= slotDetails
   
 
   const handlePaymentProcess = async () => {
+    console.log(mentor.name);
+    
     if (!mobileNumber || !/^\d{10}$/.test(mobileNumber)) {
       alert("Please enter a valid 10-digit mobile number");
       return;
@@ -49,7 +51,9 @@ const {date, startTime, endTime= "", duration, price}= slotDetails
         currency: "INR",
         name: "EduHub Booking",
         description: `Booking for ${new Date(date).toLocaleDateString()}`,
-        bookingId
+        bookingId,
+        mentorName: mentor.name,
+        mentorEmail: mentor.email
       });
   
       const options = {
@@ -66,10 +70,12 @@ const {date, startTime, endTime= "", duration, price}= slotDetails
         },
         handler: async (response) => {
           try {
+            console.log("bookingId: ", bookingId);
+            
             // Send response to backend for signature verification
-            await paymentApi.verifyPayment(response);
+            await paymentApi.verifyPayment(response, bookingId);
   
-            navigate("/dashboard/bookings", {
+            navigate("/dashboard/booking", {
               state: {
                 bookingDetails: { date, startTime, endTime, price },
                 paymentId: response.razorpay_payment_id

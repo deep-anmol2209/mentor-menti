@@ -37,6 +37,13 @@ const rescheduleBooking= async(bookingData)=>{
     
     return await AxiosInstances.patch('/booking/rescheduleSlot', bookingData)
 }
+
+const cancelBooking= async(bookingId)=>{
+
+    console.log(bookingId);
+    return await AxiosInstances.patch('/booking/cancelBooking', bookingId)
+    
+}
 export default {
     bookService,
     getMentorBookings,
@@ -44,6 +51,7 @@ export default {
     getBookingsByUsername,
     updateBooking,
     checkTimeConflict,
-    rescheduleBooking
+    rescheduleBooking,
+    cancelBooking
 }
 

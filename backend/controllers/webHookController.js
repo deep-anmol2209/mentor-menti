@@ -6,40 +6,27 @@ const zoomService = require("../services/zoom.service");
 const emailService = require("../services/email.service");
 const moment = require("moment");
 const handleRazorpayWebhook = async (req, res, next) => {
-  console.log('hello');
-  
   const { event } = req.body;
-  console.log(event);
-  
   if (event === "order.paid") {
     const bookingId = req.body.payload.payment.entity.notes.bookingId;
-    console.log(bookingId);
-    
     const booking = await bookingService.getBookingById(bookingId);
-    console.log(booking);
-    console.log(booking.bookingDate);
-    
-    
     const zoomMeeting = await zoomService.createScheduledZoomMeeting(
       booking.bookingDate,
       booking.duration,
       booking.startTime
     );
-console.log('meeting link: ', zoomMeeting);
 
-   const updatedBooking=await bookingService.updateBookingById(bookingId, {
+    await bookingService.updateBookingById(bookingId, {
       meetingLink: zoomMeeting,
       status: "confirmed",
-    }, {new: true});
-    console.log("status",updatedBooking);
+    });
     
     await emailService.sendConfirmationMail(
-      updatedBooking.user.email,
-      updatedBooking.user.name,
-      updatedBooking.status,
+      booking.user.email,
+      booking.user.name,
       zoomMeeting,
-      moment(updatedBooking.bookingDate).format("DD-MM-YYYY"),
-      updatedBooking.startTime
+      moment(booking.dateAndTime).format("DD-MM-YYYY"),
+      moment(booking.dateAndTime).format("HH:mm")
     );
   }
   return res.status(httpStatus.ok).json({

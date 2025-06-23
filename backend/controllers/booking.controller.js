@@ -4,8 +4,7 @@ const BookingModel= require("../models/booking.model")
 const httpStatus = require('../util/httpStatus');
 const serviceService = require('../services/service.service');
 const bookingService = require('../services/booking.service');
-const emailService = require('../services/email.service')
-const moment = require("moment")
+
 const initiateBookingAndPayment = async (req, res) => {
     const { bookingDate, serviceId } = req.body;
     const service = await serviceService.getServiceById(serviceId);
@@ -124,13 +123,7 @@ console.log('hello');
          message: "booking not found"
         })
     }
-   
-    await emailService.sendRescheduleRequestMail(
-        booking.user.email,
-        booking.user.name,
-        'https://mentor-menti-uint.vercel.app/dashboard/bookings'
-      );
-    
+
     res.status(httpStatus.ok).json({
         success: true,
         booking
@@ -190,15 +183,6 @@ const checkTimeConflict = async (req, res) => {
         return res.status(404).json({ message: "Booking not found" });
       }
   
-      await emailService.sendConfirmationMail(
-        updatedBooking.user.email,
-        updatedBooking.user.name,
-        updatedBooking.status,
-        updatedBooking.meetingLink,
-        moment(updatedBooking.bookingDate).format("DD-MM-YYYY"),
-        updatedBooking.startTime
-       
-      );
       res.status(200).json({
         message: "Booking rescheduled successfully",
         booking: updatedBooking,
@@ -208,6 +192,19 @@ const checkTimeConflict = async (req, res) => {
       res.status(500).json({ message: "Internal server error" });
     }
   };
+
+  const cancelBooking= async (req, res)=>{
+    const {bookingId}= req.body;
+
+    if(!bookingId){
+      return res.status(httpStatus.badRequest).json({
+        success: false,
+        message: "booking id is missing"
+      })
+    }
+
+    const cancel= bookingService.cancelBooking(bookingId)
+  }
 
 module.exports = {
     initiateBookingAndPayment,

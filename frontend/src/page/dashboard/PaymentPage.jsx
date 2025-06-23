@@ -18,6 +18,7 @@ console.log(mentor);
 // const {fromDate, startTime, courseType, duration, price, endTime }= service
 const {date, startTime, endTime= "", duration, price, bookingId}= slotDetails
 
+console.log('paymanet page: ', bookingId);
 
 
   const [mobileNumber, setMobileNumber] = useState("");

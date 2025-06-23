@@ -1,6 +1,6 @@
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
-const createPayment= require('../services/payment.service')
+
 const paymentApi= require("../services/payment.service")
 require("dotenv").config();
 const {getZoomAccessToken} =require('../services/zoom.service');
@@ -82,7 +82,7 @@ console.log(expectedSignature);
   if (expectedSignature !== razorpay_signature) {
     return res.status(400).json({ success: false, msg: "transaction is not legit" });
   } 
-await createPayment(bookingId, razorpay_payment_id)
+await paymentApi.createPayment(bookingId, razorpay_payment_id)
 
  return res.status(httpStatus.ok).json({success: true, order_id: razorpay_order_id, paymentId: razorpay_payment_id})
 

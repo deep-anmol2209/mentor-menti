@@ -52,9 +52,9 @@ console.log('paymanet page: ', bookingId);
         currency: "INR",
         name: "EduHub Booking",
         description: `Booking for ${new Date(date).toLocaleDateString()}`,
-        bookingId,
         mentorName: mentor.name,
-        mentorEmail: mentor.email
+        mentorEmail: mentor.email,
+        bookingId: bookingId,
       });
   
       const options = {

@@ -2,8 +2,10 @@ import axios from "axios";
 import AxiosInstances from "./index.js";
 const API_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000/v1';
 
-const createOrder = async ({ amount, currency, name, description,mentorName, mentorEmail }) => {
-    try {
+const createOrder = async ({ amount, currency, name, description,mentorName, mentorEmail, bookingId }) => {
+    try { 
+      console.log("Api manager: ", bookingId);
+      
         console.log(API_URL);
         
       const response = await AxiosInstances.post(`${API_URL}/payment/create-order`, {
@@ -12,7 +14,8 @@ const createOrder = async ({ amount, currency, name, description,mentorName, men
         name,
         description,
         mentorName,
-        mentorEmail
+        mentorEmail,
+        bookingId
       });
       return response.data;
     } catch (error) {

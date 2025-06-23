@@ -159,6 +159,7 @@ const MentorProfile = () => {
         service={service}
         username={mentor?.username || username}
         bookings={bookings} // Pass the bookings data
+        mentor= {mentor}
       />
     ))}
               </div>

@@ -201,6 +201,7 @@ const handleRecheduleSubmit = useCallback(async (values) => {
 
     const bookingData = {
       ...editBooking,
+      service: editBooking.service._id,
       rescheduleSlots: formattedValues.availability,
       status: "reschedulerequest",
       rescheduleRequested: true

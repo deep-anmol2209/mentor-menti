@@ -130,7 +130,7 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor }) => {
       };
 
       const response = await bookingApi.bookService(bookingData);
-      console.log(service.fromDate);
+      console.log("bookingId response: ", response);
       navigate(`/mentor/${username}/service/${service._id}/payment`, {
         state: {
           service,

@@ -10,6 +10,7 @@ import Schedule from "@/page/dashboard/Schedule";
 import Bookings from "@/page/dashboard/bookings";
 import BookingPages from "@/page/BookingPages";
 import PaymentPage from "@/page/dashboard/PaymentPage";
+import Payment from "@/page/dashboard/Payment";
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },

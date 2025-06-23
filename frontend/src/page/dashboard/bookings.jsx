@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Table,Button,  Input, Modal, Form, Spin, Select, DatePicker, TimePicker} from 'antd';
 import Dashboard from './dashboard';
 import { BiErrorAlt, BiCalendar, BiTime } from "react-icons/bi";
-import booking from '../../apiManager/booking';
+import bookingApi from "../../apiManager/booking"
 import useUserStore from '@/store/user';
 import { AiOutlineEye } from "react-icons/ai";
 import moment from 'moment';
@@ -33,7 +33,7 @@ const Bookings = () => {
   const fetchBookings = async () => {
     setLoading(true);
     
-    const res = user.role==="mentor"?( await booking.getMentorBookings()): (await booking.getStudentBookings());
+    const res = user.role==="mentor"?( await bookingApi.getMentorBookings()): (await bookingApi.getStudentBookings());
     console.log(res);
     
     setBookings(res?.data?.bookings);
@@ -114,7 +114,7 @@ const handleCancelBooking = async (booking) => {
     const confirm = window.confirm("Are you sure you want to cancel this session?");
     if (!confirm) return;
 
-    await booking.cancelBooking(booking._id); // <-- you create this API
+    await bookingApi.cancelBooking(booking._id); // <-- you create this API
 
     fetchBookings(); // Refresh bookings
   } catch (error) {
@@ -153,7 +153,7 @@ const handleSlotSelect = async (slot) => {
     };
     
     // Send as PATCH with bookingId in body
-    const response = await booking.rescheduleBooking(bookingData);
+    const response = await bookingApi.rescheduleBooking(bookingData);
     toast.success("Rescheduled successfully!");
     fetchBookings(); // Refresh bookings list
     setIsRescheduleModalVisible(false);
@@ -177,7 +177,7 @@ const handleRecheduleSubmit = useCallback(async (values) => {
     // Check for time conflicts (similar to initiateBooking)
     const conflictResponses = await Promise.all(
       formattedValues.availability.map(async slot => {
-        return await booking.checkTimeConflict({
+        return await bookingApi.checkTimeConflict({
           mentor: editBooking.mentor,
           date: slot.date,
           startTime: slot.timeSlot.startTime,
@@ -206,7 +206,7 @@ const handleRecheduleSubmit = useCallback(async (values) => {
       rescheduleRequested: true
     };
 
-    const response = await booking.updateBooking(bookingData);
+    const response = await bookingApi.updateBooking(bookingData);
     toast.success("Reschedule request sent successfully!");
     setIsRescheduleModalVisible(false);
     fetchBookings();

@@ -116,7 +116,6 @@ const Sidebar = () => {
     ...(user?.role === "mentor"
       ? [
           { label: "Services", path: "/dashboard/services" },
-          { label: "Schedule", path: "/dashboard/schedule" },
           { label: "Payment", path: "/dashboard/payment" },
         ]
       : []),

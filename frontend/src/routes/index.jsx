@@ -44,6 +44,12 @@ const routes = [
     element: <AllMentors />,
     isProtected: false,
   },
+
+  {
+    path: "/dashboard/payment",
+    element: <Payment/>,
+    isProtected: true,
+      },
   {
     path: "/mentor/profile/:username",
     element: <MentorProfile />,

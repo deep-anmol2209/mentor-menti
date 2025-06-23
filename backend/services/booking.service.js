@@ -76,7 +76,7 @@ function getDayName(date) {
 }
 
 const getUsersBooking = async(userId) =>{
-    return await BookingModel.find({user:userId});
+    return await BookingModel.find({user:userId}).populate("user service");
 };
 
 const getMentorBookings = async(mentorId)=>{

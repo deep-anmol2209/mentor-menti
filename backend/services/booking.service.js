@@ -5,8 +5,6 @@ const createBooking = async(bookingData)=>{
 };
 
 const getBookingById = async(bookingId) => {
-    console.log("bookingId: ", bookingId);
-    
     return await BookingModel.findById(bookingId)
     .populate('service')
     .populate('user');
@@ -24,7 +22,7 @@ const updateBookingById = async (bookingId, bookingData) => {
   
     return await BookingModel.findByIdAndUpdate(bookingId, update, {
       new: true,
-    }).populate("user");
+    });
   };
 
 
@@ -82,7 +80,7 @@ const getUsersBooking = async(userId) =>{
 };
 
 const getMentorBookings = async(mentorId)=>{
-    return await BookingModel.find({mentor:mentorId});
+    return await BookingModel.find({mentor:mentorId}).populate("user service");
 };
 
 const getMentorBookingsByUsername = async (username) => {
@@ -99,11 +97,15 @@ const getMentorBookingsByUsername = async (username) => {
 const rescheduleBooking= async (bookingId, bookingData)=>{
     console.log("reschedule: ",bookingData);
     
-return await BookingModel.findByIdAndUpdate(bookingId, {...bookingData}, {new: true}).populate('user');
+return await BookingModel.findByIdAndUpdate(bookingId, {...bookingData}, {new: true})
 }
 
 const findAndUpdateById= async(bookingId, bookingData)=>{
-    return await BookingModel.findByIdAndUpdate(bookingId, bookingData, {new: true}).populate("user")
+    return await BookingModel.findByIdAndUpdate(bookingId, bookingData, {new: true})
+}
+
+const cancelBooking= async(bookingId)=>{
+    return await BookingModel.findByIdAndUpdate(bookingId, {status: "cancelled"}, {new : true})
 }
 module.exports = {
      createBooking,
@@ -115,5 +117,6 @@ module.exports = {
      generateCourseDates,
      getMentorBookingsByUsername,
      rescheduleBooking,
-     findAndUpdateById
+     findAndUpdateById,
+     cancelBooking
 }

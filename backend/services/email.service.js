@@ -27,6 +27,8 @@ const sendConfirmationMail = async (to, name,status, meetingLink, date , time) =
 console.log("status: ",status);
 
   if (status === "confirmed") {
+    console.log("to: ", to);
+    
      template = path.join(__dirname, `../template/confirmation.ejs` );
      console.log("confirmed",template);
   } else if (status === "rescheduled") {
@@ -44,6 +46,7 @@ console.log("status: ",status);
     time,
     status, // optional: if you want to use in the template
   });
+console.log("data: ", data);
 
   return sendEmail(to, subject, data);
 };

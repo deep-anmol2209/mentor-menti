@@ -40,6 +40,12 @@ const Profile = () => {
   };
 
   const handleSubmit = async (values) => {
+    for(let link in values.social){
+      if(link!==""){
+        console.log(link);
+        
+      }
+    }
     const updatedUserData = {
       name: values.name,
       tags: values.skills.split(",").map((tag) => tag.trim()),

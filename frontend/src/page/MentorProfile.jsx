@@ -23,13 +23,11 @@ const MentorProfile = () => {
         const mentorDetail = mentorResponse?.data?.mentor || {};
         const mentorService = mentorResponse?.data?.services || [];
         
-        // Fetch bookings for this mentor
-        const bookingsResponse = await bookingApi.getBookingsByUsername(username);
-        const mentorBookings = bookingsResponse?.data?.bookings || []; // Access the 'bookings' property
+       
         
         setServices(mentorService);
         setMentor(mentorDetail);
-        setBookings(mentorBookings);
+        
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -39,6 +37,13 @@ const MentorProfile = () => {
     fetchMentor();
   }, [username]);
 
+  const fetchBookings = async()=>{
+ // Fetch bookings for this mentor
+ const bookingsResponse = await bookingApi.getBookingsByUsername(username);
+ const mentorBookings = bookingsResponse?.data?.bookings || [];
+ setBookings(mentorBookings);
+ // Access the 'bookings' property
+  }
   // Function to check if a time slot is booked
   const isSlotBooked = (serviceId, date, startTime, endTime) => {
     return bookings.some(booking => 
@@ -157,6 +162,7 @@ const MentorProfile = () => {
       <ServiceCardUserSide
         key={service?._id}
         service={service}
+        fetchBookings={fetchBookings}
         username={mentor?.username || username}
         bookings={bookings} // Pass the bookings data
         mentor= {mentor}

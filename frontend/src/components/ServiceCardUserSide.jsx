@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { BiErrorAlt, BiCalendar, BiTime } from "react-icons/bi";
 import { Button, Modal, Spin } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useLocation, Navigate} from "react-router-dom";
 import bookingApi from "../apiManager/booking"
 import { LogIn } from "lucide-react";
-const ServiceCardUserSide = ({ service, username, bookings, mentor }) => {
+import useUserStore from "@/store/user";
+
+const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBookings }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableSlots, setAvailableSlots] = useState([]);
@@ -14,6 +16,13 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor }) => {
 
 
   const showModal = () => {
+    const {user} = useUserStore();
+    const location = useLocation();
+    if(!user){
+      removeToken();
+        return <Navigate to={`/signin?redirect=${location.pathname}`}/>
+    }
+    fetchBookings()
     setIsModalVisible(true);
     if (service.courseType === "one-on-one") {
       fetchAvailableSlots();

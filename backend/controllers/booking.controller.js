@@ -195,7 +195,10 @@ const checkTimeConflict = async (req, res) => {
 
   const cancelBooking= async (req, res)=>{
     const {bookingId}= req.body;
-
+    console.log(req.body);
+    
+console.log(bookingId);
+try{
     if(!bookingId){
       return res.status(httpStatus.badRequest).json({
         success: false,
@@ -204,6 +207,13 @@ const checkTimeConflict = async (req, res) => {
     }
 
     const cancel= bookingService.cancelBooking(bookingId)
+if(!cancel){
+  return res.status(httpStatus.internalServerError).json({success: false, message: "server error"})
+}
+    return res.status(httpStatus.ok).json({success: true, message:"booking canceled successfuly"})
+  }catch(error){
+    return res.status(httpStatus.internalServerError).json({success: false, message: error.message})
+  }
   }
 
 module.exports = {
@@ -213,6 +223,7 @@ module.exports = {
     getBookingsByUsername,
     updateBookingById,
     checkTimeConflict,
-    rescheduleBooking
+    rescheduleBooking,
+    cancelBooking
 }
 

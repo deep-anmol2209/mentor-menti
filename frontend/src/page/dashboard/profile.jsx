@@ -10,7 +10,7 @@ const Profile = () => {
   const inputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm();
+
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -69,26 +69,6 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    if (isEditing && mentorData) {
-      form.setFieldsValue({
-        name: mentorData.name || '',
-        email: mentorData.email || '',
-        title: mentorData.profile?.title || '',
-        skills: mentorData.profile?.tags?.join(', ') || '',
-        bio: mentorData.profile?.bio || '',
-        college: mentorData.profile?.college || '',
-        social: {
-          linkedin: mentorData?.profile?.social?.linkedin || '',
-          github: mentorData?.profile?.social?.github || '',
-          twitter: mentorData?.profile?.social?.twitter || '',
-          facebook: mentorData?.profile?.facebook || '',
-          instagram: mentorData?.profile?.instagram || ''
-        }
-      });
-    }
-  }, [isEditing, mentorData, form]);
-  
   // Generate avatar from initials
   const generateAvatarUrl = (name) => {
     const initials = name
@@ -195,7 +175,6 @@ console.log(mentorData);
             Edit Profile
           </button>
 
-          
           <Modal
             title='Edit Profile'
             open={isEditing}
@@ -204,22 +183,15 @@ console.log(mentorData);
             className='rounded-lg shadow-lg'
           >
             <Form
-              // initialValues={{
-              //   name: mentorData?.name,
-              //   email: mentorData?.email,
-              //   title: mentorData?.profile?.title,
-              //   skills: mentorData?.profile?.tags?.join(", "),
-              //   bio: mentorData?.profile?.bio,
-              //   college: mentorData?.profile?.college,
-              //   social: {
-              //     linkedin: mentorData?.social?.linkedin || '',
-              //     github: mentorData?.social?.github || '',
-              //     twitter: mentorData?.social?.twitter || '',
-              //     facebook: mentorData?.social?.facebook || '',
-              //     instagram: mentorData?.social?.instagram || ''
-              //   }
-              // }}
-              form={form}
+              initialValues={{
+                name: mentorData?.name,
+                email: mentorData?.email,
+                title: mentorData?.profile?.title,
+                skills: mentorData?.profile?.tags?.join(", "),
+                bio: mentorData?.profile?.bio,
+                college: mentorData?.profile?.college,
+                social: mentorData?.social,
+              }}
               onFinish={handleSubmit}
               layout='vertical'
             >

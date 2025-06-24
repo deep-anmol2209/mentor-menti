@@ -81,7 +81,7 @@ const Profile = () => {
         social: {
           linkedin: mentorData?.profile?.social?.linkedin || '',
           github: mentorData?.profile?.social?.github || '',
-          twitter: mentorData?.profile?social?.twitter || '',
+          twitter: mentorData?.profile?.social?.twitter || '',
           facebook: mentorData?.profile?.facebook || '',
           instagram: mentorData?.profile?.instagram || ''
         }

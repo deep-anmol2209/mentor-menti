@@ -171,7 +171,7 @@ const Bookings = () => {
     try {
      
       setLoading(true);
-      await bookingApi.cancelBooking({ bookingId: record._id });
+      await bookingApi.completeBooking({ bookingId: record._id });
       toast.success("Booking completed");
       await fetchBookings();
     } catch (error) {

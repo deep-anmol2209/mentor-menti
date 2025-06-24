@@ -190,7 +190,13 @@ console.log(mentorData);
                 skills: mentorData?.profile?.tags?.join(", "),
                 bio: mentorData?.profile?.bio,
                 college: mentorData?.profile?.college,
-                social: mentorData?.social,
+                social: {
+                linkedin:  mentorData?.profile.social.linkedin,
+                github:    mentorData?.profile.social.github,
+                twitter:   mentorData?.profile.social.twitter,
+                instagram: mentorData?.profile.social.instagram,
+                facebook: mentorData?.profile.social.facebook
+                }
               }}
               onFinish={handleSubmit}
               layout='vertical'

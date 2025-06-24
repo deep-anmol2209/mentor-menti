@@ -79,11 +79,11 @@ const Profile = () => {
         bio: mentorData.profile?.bio || '',
         college: mentorData.profile?.college || '',
         social: {
-          linkedin: mentorData.social?.linkedin || '',
-          github: mentorData.social?.github || '',
-          twitter: mentorData.social?.twitter || '',
-          facebook: mentorData.social?.facebook || '',
-          instagram: mentorData.social?.instagram || ''
+          linkedin: mentorData?.profile?.social?.linkedin || '',
+          github: mentorData?.profile?.social?.github || '',
+          twitter: mentorData?.profile?social?.twitter || '',
+          facebook: mentorData?.profile?.facebook || '',
+          instagram: mentorData?.profile?.instagram || ''
         }
       });
     }

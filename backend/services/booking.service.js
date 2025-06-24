@@ -53,7 +53,9 @@ const isSlotAlreadyBooked = async ({ mentor, bookingDate, startTime, endTime }) 
     }
 };
 
-
+const completeBooking=async(bookingId)=>{
+    return await BookingModel.findByIdAndUpdate(bookingId, {status: "completed"}, {new: true})
+}
 
 function generateCourseDates(service) {
     const dates = [];

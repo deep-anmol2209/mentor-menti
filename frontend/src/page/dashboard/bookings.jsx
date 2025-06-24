@@ -318,6 +318,9 @@ const Bookings = () => {
   const handleEditBookingModal = (record) => {
     console.log("handleEditService: ", record);
 
+    const handleMarkAsCompleted= async(record)=>{
+      await bookingApi.completeBooking({bookingId: record._id})
+    }
 
 
     const initialValues = {

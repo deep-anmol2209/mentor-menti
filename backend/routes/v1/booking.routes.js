@@ -22,5 +22,6 @@ router.post('/checkConflict', auth.protect,  asyncHandler(bookingController.chec
 
 router.patch('/rescheduleSlot', auth.protect, asyncHandler(bookingController.rescheduleBooking))
 router.patch('/cancelBooking', auth.protect, asyncHandler(bookingController.cancelBooking))
+router.patch('/completeBooking', auth.protect, asyncHandler(bookingController.completeBooking))
 
 module.exports = router;

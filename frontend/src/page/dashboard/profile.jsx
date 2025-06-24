@@ -190,7 +190,13 @@ console.log(mentorData);
                 skills: mentorData?.profile?.tags?.join(", "),
                 bio: mentorData?.profile?.bio,
                 college: mentorData?.profile?.college,
-                social: mentorData?.social,
+                social: {
+                  linkedin: mentorData?.social?.linkedin || '',
+                  github: mentorData?.social?.github || '',
+                  twitter: mentorData?.social?.twitter || '',
+                  facebook: mentorData?.social?.facebook || '',
+                  instagram: mentorData?.social?.instagram || ''
+                }
               }}
               onFinish={handleSubmit}
               layout='vertical'

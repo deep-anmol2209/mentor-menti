@@ -244,6 +244,7 @@ module.exports = {
   updateBookingById,
   checkTimeConflict,
   rescheduleBooking,
-  cancelBooking
+  cancelBooking,
+  completeBooking
 }
 

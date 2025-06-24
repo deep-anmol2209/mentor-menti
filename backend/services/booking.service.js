@@ -120,5 +120,6 @@ module.exports = {
      getMentorBookingsByUsername,
      rescheduleBooking,
      findAndUpdateById,
-     cancelBooking
+     cancelBooking,
+     completeBooking
 }

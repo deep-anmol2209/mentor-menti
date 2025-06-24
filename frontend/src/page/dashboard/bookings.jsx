@@ -158,7 +158,7 @@ const Bookings = () => {
       };
 
       // Send as PATCH with bookingId in body
-      const response = await booking.rescheduleBooking(bookingData);
+      const response = await bookingApi.rescheduleBooking(bookingData);
       toast.success("Rescheduled successfully!");
       fetchBookings(); // Refresh bookings list
       setIsRescheduleModalVisible(false);
@@ -166,6 +166,21 @@ const Bookings = () => {
       toast.error(error.response?.data?.message || "Failed to reschedule");
     }
   };
+
+  const handleMarkAsCompleted= async(record)=>{
+    try {
+     
+      setLoading(true);
+      await bookingApi.cancelBooking({ bookingId: record._id });
+      toast.success("Booking completed");
+      await fetchBookings();
+    } catch (error) {
+      toast.error("Failed to complete booking");
+      console.error("Complete failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
   const handleRecheduleSubmit = useCallback(async (values) => {
     setLoading(true);
     try {
@@ -182,7 +197,7 @@ const Bookings = () => {
       // Check for time conflicts (similar to initiateBooking)
       const conflictResponses = await Promise.all(
         formattedValues.availability.map(async slot => {
-          return await booking.checkTimeConflict({
+          return await bookingApi.checkTimeConflict({
             mentor: editBooking.mentor,
             date: slot.date,
             startTime: slot.timeSlot.startTime,
@@ -211,7 +226,7 @@ const Bookings = () => {
         rescheduleRequested: true
       };
 
-      const response = await booking.updateBooking(bookingData);
+      const response = await bookingApi.updateBooking(bookingData);
       toast.success("Reschedule request sent successfully!");
       setIsRescheduleModalVisible(false);
       fetchBookings();
@@ -318,9 +333,6 @@ const Bookings = () => {
   const handleEditBookingModal = (record) => {
     console.log("handleEditService: ", record);
 
-    const handleMarkAsCompleted= async(record)=>{
-      await bookingApi.completeBooking({bookingId: record._id})
-    }
 
 
     const initialValues = {

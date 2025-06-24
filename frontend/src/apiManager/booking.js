@@ -46,7 +46,7 @@ const cancelBooking= async(bookingId)=>{
 }
 const completeBooking= async(bookingId)=>{
 
-    await AxiosInstances.patch("/booking/completeBooking",bookingId)
+   return await AxiosInstances.patch("/booking/completeBooking",bookingId)
 }
 export default {
     bookService,

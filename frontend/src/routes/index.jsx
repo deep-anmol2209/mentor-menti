@@ -11,9 +11,13 @@ import Bookings from "@/page/dashboard/bookings";
 import BookingPages from "@/page/BookingPages";
 import PaymentPage from "@/page/dashboard/PaymentPage";
 import Payment from "@/page/dashboard/Payment";
+import ResetPassword from "@/page/ResetPassword";
+import ForgotPassword from "@/page/ForgotPassword";
 
 const routes = [
   { path: "/", element: <Home />, isProtected: false },
+  { path: "/reset-password", element: <ResetPassword/>, isProtected: false },
+  { path: "/forgot-password", element: <ForgotPassword/>, isProtected: false },
   { path: "/signin", element: <Signin />, isProtected: false },
   {
     path: "/signup/:role",

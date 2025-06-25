@@ -12,12 +12,12 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBooking
   const [availableSlots, setAvailableSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const navigate = useNavigate();
-
+  const {user} = useUserStore();
+  const location = useLocation();
 
 
   const showModal = () => {
-    const {user} = useUserStore();
-    const location = useLocation();
+   
     if(!user){
       removeToken();
         return <Navigate to={`/signin?redirect=${location.pathname}`}/>

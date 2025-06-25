@@ -63,8 +63,18 @@ const sendRescheduleRequestMail = async (to, name, bookingPageUrl) => {
   return sendEmail(to, subject, data);
 };
 
+const resetPasswordtMail = async (name, to, otp, token) => {
+  const subject = "Reset Password Request";
+
+  const templatePath = path.join(__dirname, "../template/resetPassword.ejs");
+  const data = await ejs.renderFile(templatePath, { name, otp,to, token });
+
+  return sendEmail(to, subject, data);
+};
+
 
 module.exports = {
   sendConfirmationMail,
-  sendRescheduleRequestMail
+  sendRescheduleRequestMail,
+  resetPasswordtMail
 };

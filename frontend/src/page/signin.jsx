@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink,useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import useUserStore from '../store/user';
 import { useForm } from 'react-hook-form';
 import auth from "../apiManager/auth";
@@ -12,12 +12,12 @@ const Signin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  const {setUser} = useUserStore();
+  const { setUser } = useUserStore();
 
-  const {register, handleSubmit, reset, formState:{errors}} = useForm();
-  
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-  const onSubmit= async(data)=>{
+
+  const onSubmit = async (data) => {
     setIsLoading(true);
 
     try {
@@ -28,7 +28,7 @@ const Signin = () => {
       navigate("/");
       toast.success("Login Successfully!")
     } catch (error) {
-      console.log("Singin Error :",error);
+      console.log("Singin Error :", error);
       toast.error("Login failed! Invalid credentials")
     }
     setIsLoading(false);
@@ -36,9 +36,9 @@ const Signin = () => {
   }
   return (
     <>
-        <Nav/>
+      <Nav />
 
-        <div className="sm:h-screen min-h-screen py-10 bg-teal-100">
+      <div className="sm:h-screen min-h-screen py-10 bg-teal-100">
         <div className="flex items-center justify-center h-full">
           {/* Form Container */}
           <div className="w-full max-w-lg px-6 py-8 bg-white bg-opacity-90 rounded-lg shadow-xl">
@@ -106,10 +106,18 @@ const Signin = () => {
                 >
                   {isLoading ? "Loading..." : "Sign In"}
                 </button>
+                <Link
+                to="/forgot-password"
+                className="mt-4 block text-sm text-center cursor-pointer hover:underline text-teal-600"
+              >
+                Forgot password?
+              </Link>
               </div>
+
+              
             </form>
 
-                {/* Studnet signup link */}
+            {/* Studnet signup link */}
             <p className="mt-6 text-sm text-center text-gray-600">
               Don't have an account yet?{" "}
               <NavLink
@@ -121,11 +129,11 @@ const Signin = () => {
               .
             </p>
 
-                
+
           </div>
         </div>
       </div>
-        
+
     </>
   )
 }

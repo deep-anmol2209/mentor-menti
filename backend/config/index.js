@@ -3,6 +3,7 @@ require('dotenv').config();
 module.exports = {
     PORT: process.env.PORT,
     DB_URL : process.env.DB_URL,
+    CLIENT_URL: process.env.CLIENT_URL,
     PREFIX: process.env.PREFIX || '/v1',
     zoom:{
     clientId: process.env.ZOOM_CLIENT_ID,

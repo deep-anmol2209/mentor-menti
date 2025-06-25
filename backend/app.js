@@ -1,15 +1,17 @@
 const express = require('express');
 const cors = require('cors');
+const config= require("./config")
 const cookieParser = require('cookie-parser');
 
 const app = express();
+app.set('trust proxy', true);
 require("./config/db");
 
 const routes = require('./routes/v1');
-const config = require('./config');
+
 
 app.use(cors({
-    origin: 'https://mentor-menti-uint.vercel.app'
+    origin: config.CLIENT_URL
   }));
 
 

@@ -30,6 +30,8 @@ const signUp = async (req, res) => {
 
 const signIn = async (req, res) => {
     const { email, password } = req.body;
+    console.log(getClientInfo(req));
+    
     const user = await authService.loginUserWithEmailAndPassword(email, password);
 
     const token = await tokenService.generateAuthTokens(user);

@@ -1,11 +1,18 @@
-const getClientInfo = (req) => {
-    const ip = req.headers['x-forwarded-for']
-      ? req.headers['x-forwarded-for'].split(',')[0].trim()
-      : req.socket?.remoteAddress || req.ip;
-  
-    const userAgent = req.headers['user-agent'] || 'Unknown';
-  
-    return { ip, userAgent };
-  };
 
-  module.exports= getClientInfo
+const getClientInfo = (req) => {
+  let ip;
+
+  ip = req.ip
+  if (ip === '::1') return '127.0.0.1';
+
+  // IPv4-mapped IPv6
+  if (ip.startsWith('::ffff:')) return ip.replace('::ffff:', '');
+
+
+  const userAgent = req.headers['user-agent'] || 'Unknown';
+console.log(ip);
+
+  return { ip, userAgent };
+};
+
+module.exports = getClientInfo

@@ -20,7 +20,7 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBooking
    
     if(!user){
       removeToken();
-        return <Navigate to={`/signin?redirect=${location.pathname}`}/>
+        return navigate(`/signin?redirect=${location.pathname}`)
     }
     fetchBookings()
     setIsModalVisible(true);

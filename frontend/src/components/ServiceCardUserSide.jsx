@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { BiErrorAlt, BiCalendar, BiTime } from "react-icons/bi";
 import { Button, Modal, Spin } from "antd";
+import { removeToken } from "@/helper";
 import { useNavigate ,useLocation, Navigate} from "react-router-dom";
 import bookingApi from "../apiManager/booking"
 import { LogIn } from "lucide-react";

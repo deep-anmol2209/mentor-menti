@@ -42,4 +42,5 @@ const passwordChangeLogSchema = new Schema({
   userAgent: String
 });
 
-module.exports = model("PasswordChangeLog", passwordChangeLogSchema);
+const passwordChangeLog = model("PasswordChangeLog", passwordChangeLogSchema);
+module.exports= passwordChangeLog

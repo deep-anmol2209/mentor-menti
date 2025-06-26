@@ -1,4 +1,4 @@
-const passwordChangeLogModel = require("../models/passwordChangeLogModel");
+const passwordChangeLog = require("../models/passwordChangeLogModel");
 const UserModel = require("../models/user.model");
 
 const getUserById = async(id)=>{
@@ -23,7 +23,7 @@ const updateUserProfile = async(id,profileData)=>{
 
 const createOtpDoc= async(resetData)=>{
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // expires in 5 min
-return await passwordChangeLogModel.create({
+return await passwordChangeLog.create({
     userId: resetData.userId,
     method: "reset",
     otp: resetData.otp,
@@ -52,7 +52,9 @@ const findUserByEmail = async (email) => {
   };
 
   const updateResetEntry = async (token) => {
-    return await passwordChangeLogModel.findOneAndUpdate(
+    console.log("update called");
+    
+    return await passwordChangeLog.findOneAndUpdate(
       { tokenUsed: token }, 
       { used: true },       
       { new: true }         

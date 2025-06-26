@@ -182,6 +182,8 @@ const updatePassword = async (req, res) => {
     }
 
     const updateResetEntry= await userService.updateResetEntry(token);
+    console.log("update Entry: ", updateResetEntry);
+    
     if(!updateResetEntry){
         return res.status(httpStatus.badRequest).json({success: false,
             message:"reset entry status ot updated"

@@ -10,7 +10,7 @@ const getClientInfo = (req) => {
 
 
   const userAgent = req.headers['user-agent'] || 'Unknown';
-console.log(ip);
+
 
   return { ip, userAgent };
 };

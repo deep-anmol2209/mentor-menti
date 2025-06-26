@@ -28,7 +28,7 @@ return await passwordChangeLogModel.create({
     method: "reset",
     otp: resetData.otp,
     tokenUsed: resetData.tokenUsed,
-    ip: resetData.id,
+    ip: resetData.ip,
     userAgent: resetData.userAgent,
     expiredAt: expiresAt
 

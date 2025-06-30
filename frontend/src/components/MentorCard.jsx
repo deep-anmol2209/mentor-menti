@@ -1,5 +1,5 @@
 import React from "react";
-import noImage from "../assets/no-image.webp";
+import noImage from "../public/assets/no-image.webp";
 
 const MentorCard = ({ mentor, handleClick }) => {
   const socialLinks = [

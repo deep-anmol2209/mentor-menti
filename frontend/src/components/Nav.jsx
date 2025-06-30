@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import useUserStore from "../store/user";
 import { Dropdown, Button } from "antd";
 import { removeToken } from "../helper";
-import eduHubLogo from "../assets/EduHubLogo.webp";
+import eduHubLogo from "../public/assets/EduHubLogo.webp"
 
 function Nav() {
   const { user, setUser } = useUserStore();

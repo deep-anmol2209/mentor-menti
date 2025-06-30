@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { removeToken } from "../helper";
 import useUserStore from "../store/user";
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import eduHubLogo from "../assets/EduHubLogo.webp";
+import eduHubLogo from "../public/assets/EduHubLogo.webp";
 
 const DashboardNavbar = () => {
   const navigate = useNavigate();

@@ -213,6 +213,7 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBooking
               </div>
             ) : availableSlots.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
                 {availableSlots.map((slot, index) => {
                   const isBooked = isSlotBooked(slot.date, slot.startTime, slot.endTime);
                   return (

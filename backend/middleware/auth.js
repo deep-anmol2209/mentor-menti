@@ -21,7 +21,10 @@ const protect = async(req,res,next)=>{
     }
     
     try {
+        console.log("decoding");
+        
         const decoded= await verifyToken(token,"accessToken");
+        console.log("decoded: ",decoded);
         
         const currentUser = await getUserById(decoded._id);
         
@@ -38,12 +41,13 @@ const protect = async(req,res,next)=>{
         req.user = currentUser;
         return next();
     } catch (error) {
-        console.error("JWT Auth Error:", error);
-        return next(
+        console.error("JWT Auth Error:", error); 
+       return  next(
             new ApiError(
                 httpStatus.unauthorized,'You are not allowed'
             )
         )
+        
     }
 
 }

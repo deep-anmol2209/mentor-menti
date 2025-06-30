@@ -42,8 +42,18 @@ const Profile = () => {
   };
 
   const handleDeletePhoto = async() => {
+    try{
+      setLoading(true)
     console.log("Photo deleted");
     await userAPI.deletePhoto();
+    setUser({ ...mentorData, photoUrl: "" });
+    }catch(error){
+      console.log("image deletion failed", error);
+      
+    }finally{
+      setLoading(false)
+      
+    }
   };
 
   const items = [

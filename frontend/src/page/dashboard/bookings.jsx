@@ -231,7 +231,7 @@ const Bookings = () => {
       setIsRescheduleModalVisible(false);
       fetchBookings();
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response.data.message);
     } finally {
       setLoading(false);
     }

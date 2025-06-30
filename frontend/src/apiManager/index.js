@@ -24,10 +24,14 @@ AxiosInstances.interceptors.request.use((config)=>{
 AxiosInstances.interceptors.response.use(
     (response)=>response,
     (error)=>{
-        if(error.response?.data.success==='false'){
+        if(error.response?.data.success===false){
+            console.log("hello");
+            
             const message= error.response.data.message;
             message?toast.error(message):toast.error("Something Went Wrong");
-            if(error.response.status === 401){
+            console.log("error: ", error);
+            
+            if(error.status === 401){
                 removeToken();
                 sessionStorage.removeItem(USER_STORE_PERSIST);
                 window.location.href = "/signin"

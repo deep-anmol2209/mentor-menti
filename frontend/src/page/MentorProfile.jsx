@@ -83,7 +83,7 @@ const MentorProfile = () => {
       <div className='max-w-6xl mx-auto max-h-fit'>
         {/* Heading Section for All Mentors */}
         <div className='w-full flex flex-col items-center justify-center h-[300px] bg-gray-100'>
-          <h1 className='text-center text-2xl md:text-4xl font-semibold py-5'>{mentor.name}</h1>
+          <h1 className='text-center text-2xl md:text-4xl font-semibold py-6'>{mentor.name}</h1>
           <p>{mentor?.profile?.title}</p>
         </div>
       </div>
@@ -93,13 +93,13 @@ const MentorProfile = () => {
         {/* Mentor Details Section */}
         <div className='realtive w-full md:w-2/3 flex flex-row my-5 gap-2 md:gap-5 p-2'>
           {/* Profile Left Section */}
-          <div className='sticky top-40 bg-teal-50 w-1/3 rounded-xl p-5 max-h-fit'>
+          <div className='sticky top-40 bg-teal-50 w-1/3 rounded-xl p-5 max-h-fit flex flex-col items-center'>
             {/* Image and Social link section */}
-            <div className='rounded-full border-y-2 border-teal-500'>
+            <div className='rounded-full '>
               <img
                 src={mentor.photoUrl}
                 alt='Mentor Profile Image'
-                className='rounded-full'
+                className='rounded-full  border-teal-500'
               />
             </div>
 

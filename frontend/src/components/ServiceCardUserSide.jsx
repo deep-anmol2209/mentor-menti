@@ -166,7 +166,8 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBooking
 
   return (
     <div className="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-      <div className="p-4">
+      <div className="p-4 flex justify-between h-full flex-col">
+        <div>
         <h3 className="text-xl font-bold text-gray-800 mb-2">{service.serviceName}</h3>
         <p className="text-gray-600 mb-4">{service.description}</p>
 
@@ -183,6 +184,7 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBooking
           </span>
         </div>
 
+        </div>
         <Button
           type="primary"
           onClick={showModal}
@@ -190,8 +192,9 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBooking
         >
           Book Now
         </Button>
+        
       </div>
-
+      
       {/* Modal for slot selection */}
       <Modal
         title={`Book ${service.serviceName}`}

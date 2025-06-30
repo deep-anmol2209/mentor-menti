@@ -59,7 +59,7 @@ function Nav() {
 
   return (
     <>
-      <div className={` sticky top-0 z-50 transition-all duration-500 ${isScrolled ? "bg-teal-50" : "bg-white"}`}>
+      <div className={` sticky top-0 z-50 py-1 transition-all duration-500 ${isScrolled ? "bg-teal-50" : "bg-white"}`}>
         <div className='px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-20'>
           <div className='realtive flex items-center justify-between'>
             <div className='flex items-center'>
@@ -118,7 +118,7 @@ function Nav() {
                 size="large"
                 
               >
-                <button className='bg-teal-500 px-4 py-3 rounded-full hover:bg-teal-600 text-2xl text-white font-semibold w-[57px]'>{user.name.charAt(0).toUpperCase()}</button>
+                <button className='bg-teal-500 px-4 py-3 rounded-full hover:bg-teal-600 lg:text-4xl text-white font-semibold lg:w-[67px] text-2xl w-[57px]'>{user.name.charAt(0).toUpperCase()}</button>
               </Dropdown>
             )}
 

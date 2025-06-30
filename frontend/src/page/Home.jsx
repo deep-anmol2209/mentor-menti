@@ -51,7 +51,7 @@ function Home() {
             {/* Text Section */}
             <div className='md:w-1/2 text-center md:text-left z-10'>
               {/* learn with mentor button */}
-              <div className='bg-white px-2 py-2 w-[260px] rounded-full flex justify-center items-center gap-3 text-sm m-auto md:mx-0 mb-8'>
+              <div className='bg-white px-2 py-2 w-[260px] mt-5 rounded-full flex justify-center items-center gap-3 text-sm m-auto md:mx-0 mb-8'>
                 <div className='bg-teal-100 px-2 py-2 rounded-full'>
                   <FaChalkboardTeacher className='text-teal-900' />
                 </div>

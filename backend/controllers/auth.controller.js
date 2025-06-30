@@ -14,6 +14,15 @@ const { date } = require("joi");
 const signUp = async (req, res) => {
     const { name, email, password, username, role } = req.body;
 
+    const existingUser= await userService.findUserByEmail(email);
+
+    if(existingUser){
+        return res.status(httpStatus.badRequest).json({
+            success: false,
+            message: "email already exist"
+        })
+    }
+
     const user = await authService.createUser({
         name,
         email,

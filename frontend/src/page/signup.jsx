@@ -32,10 +32,14 @@ const Signup = () => {
       return
     }
 
+    const {confirmPassword, ...rest}= data
+
     const formData = {
-      ...data,
+      ...rest,
       role,
     };
+    console.log(formData);
+    
     try {
       const response = await auth.signup(formData);
 

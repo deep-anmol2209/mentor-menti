@@ -34,7 +34,7 @@ AxiosInstances.interceptors.response.use(
             }
         }
         else{
-            toast.error("Something went wrong");
+            toast.error(error.response.data.message);
         }
         throw error;
     }

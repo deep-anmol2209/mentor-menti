@@ -1,90 +1,73 @@
-// import React from "react";
-// import Sidebar from "../../components/Sidebar";
-// import DashboardNavbar from "../../components/DashboardNavbar";
+import { Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import React from 'react';
+import DashboardNavbar from '@/components/DashboardNavbar';
+import Sidebar from '@/components/Sidebar';
+const Dashboard = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const toggleSidebar = React.useCallback(() => {
+    setIsSidebarOpen(prev => !prev);
+  }, []);
 
-// const Dashboard = ({ children }) => {
-//   return (
-//     <div>
-//       <DashboardNavbar />
-//       <div className="flex">
-//         {/* Sidebar */}
-//         <Sidebar />
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobileView = window.innerWidth < 1024;
+      setIsMobile(isMobileView);
+      // Close sidebar by default on mobile
+      if (isMobileView && !isSidebarOpen) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
 
-//         {/* Main Content Area */}
-//         <main className="flex-1">{children}</main>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
-
-// import React from "react";
-// import Sidebar from "../../components/Sidebar";
-// import DashboardNavbar from "../../components/DashboardNavbar";
-
-// const Dashboard = ({ children }) => {
-//   return (
-//     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-white text-gray-800 dark:from-gray-900 dark:to-gray-950 dark:text-white">
-//       {/* Sticky Top Navbar */}
-//       <header className="sticky top-0 z-50 shadow-md bg-white/80 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
-//         <DashboardNavbar />
-//       </header>
-
-//       {/* Sidebar + Main Layout */}
-//       <div className="fixed top-24 left-0 flex flex-1 overflow-y-auto">
-//         {/* Sidebar */}
-//         <aside className="hidden md:block w-64 border-r border-gray-200 dark:border-gray-700 bg-white/90 dark:bg-gray-900 backdrop-blur-md">
-//           <Sidebar />
-//         </aside>
-
-//         {/* Main Content */}
-//         <main className="flex-1 p-6 overflow-y-auto">
-//           <div className="max-w-7xl mx-auto">
-//             {children}
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
-
-
-import React from "react";
-import Sidebar from "../../components/Sidebar";
-import DashboardNavbar from "../../components/DashboardNavbar";
-
-const Dashboard = ({ children }) => {
-  const sidebarWidth = 256; // 64 (w-64) * 4 = 256px
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white text-gray-800 dark:from-gray-900 dark:to-gray-950 dark:text-white">
-      {/* Sticky Navbar */}
-      <header className="sticky top-0 z-50 shadow-md bg-white/80 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+      {/* Your existing header */}
+      <header className="fixed w-full top-0 z-50 shadow-md bg-white/80 dark:bg-gray-800/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 lg:max-w-screen-3xl">
         <DashboardNavbar />
       </header>
 
-      {/* Sidebar - Fixed */}
-      <aside
-        className="block fixed top-[104px] left-0 w-64 h-[calc(100vh-64px)] border-r border-gray-200 dark:border-gray-700 bg-white/90 dark:bg-gray-900 backdrop-blur-md overflow-y-auto scrollbar-hidden"
-      >
-        <Sidebar />
-      </aside>
+      <div className="flex">
+        {/* Your sidebar */}
+        <aside
+  className={`${
+    isMobile
+      ? `fixed top-[52px] left-0 z-40` // On mobile: overlay sidebar below navbar
+      : `relative h-[calc(100vh-100px)] top-[100px]`        // On desktop: part of layout
+  } transform transition-all duration-300 ease-in-out ${
+    isSidebarOpen ? 'w-[250px]' : 'w-[60px]'
+  } overflow-hidden border-r border-gray-200 dark:border-gray-700 bg-white/90 dark:bg-gray-900 backdrop-blur-md`}
+>
+  <Sidebar
+    toggleSidebar={toggleSidebar}
+    isSidebarOpen={isSidebarOpen}
+    isMobile={isMobile}
+    onClose={() => setIsSidebarOpen(false)}
+  />
+</aside>
 
-      {/* Main Content - Scrollable */}
-      <main
-        className="ml-0 md:ml-64 p-6 overflow-y-auto scrollbar-hidden"
-        style={{ maxHeight: "calc(100vh - 64px)" }} // 64px = height of the navbar
-      >
-        <div className="max-w-7xl mx-auto">{children}</div>
-      </main>
+        {/* Main content area with Outlet */}
+        <main
+  className={`flex-1 overflow-y-auto p-0 scrollbar-hidden ml-[60px] lg:ml-0 transition-all duration-300`}
+  style={{
+    marginTop: '50px', // same height as your navbar (adjust as needed)
+    maxHeight: 'calc(100vh - 100px)' // ensure full height minus navbar
+  }}
+>
+<div className="max-w-7xl mx-auto">
+          <Outlet /> {/* This renders the nested routes */}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
-
+export default Dashboard

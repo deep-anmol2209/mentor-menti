@@ -80,6 +80,10 @@ const userSchema = new Schema({
 })
 
 userSchema.methods.isPasswordMatch = async function(password){
+  console.log("password: ", password);
+  console.log(this.password);
+  
+  
     return bcrypt.compare(password,this.password);
 };
 

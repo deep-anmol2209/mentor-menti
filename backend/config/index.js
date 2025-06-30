@@ -4,12 +4,15 @@ module.exports = {
     PORT: process.env.PORT,
     DB_URL : process.env.DB_URL,
     CLIENT_URL: process.env.CLIENT_URL,
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    TOGETHER_API_KEY: process.env.TOGETHER_API_KEY,
     PREFIX: process.env.PREFIX || '/v1',
     zoom:{
     clientId: process.env.ZOOM_CLIENT_ID,
     clientSecret: process.env.ZOOM_CLIENT_SECRET,
     accountId: process.env.ZOOM_ACCOUNT_ID
     },
+   
     email: {
         host: process.env.SMTP_HOST,
         port: Number(process.env.SMTP_PORT),

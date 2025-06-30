@@ -10,20 +10,14 @@ import Schedule from "@/page/dashboard/Schedule";
 import Bookings from "@/page/dashboard/bookings";
 import BookingPages from "@/page/BookingPages";
 import PaymentPage from "@/page/dashboard/PaymentPage";
+
 import Payment from "@/page/dashboard/Payment";
 import ResetPassword from "@/page/ResetPassword";
 import ForgotPassword from "@/page/ForgotPassword";
+import Settings from "@/page/dashboard/Settings";
 
-const routes = [
-  { path: "/", element: <Home />, isProtected: false },
-  { path: "/reset-password", element: <ResetPassword/>, isProtected: false },
-  { path: "/forgot-password", element: <ForgotPassword/>, isProtected: false },
-  { path: "/signin", element: <Signin />, isProtected: false },
-  {
-    path: "/signup/:role",
-    element: <Signup />,
-    isProtected: false,
-  },
+export const dashboardRoutes = [
+ 
   {
     path: "/dashboard/profile",
     element: <Profile />,
@@ -44,22 +38,19 @@ const routes = [
     element: <Bookings />,
     isProtected: true,
   },
-  {
-    path: "/mentors",
-    element: <AllMentors />,
-    isProtected: false,
-  },
+  
 
   {
     path: "/dashboard/payment",
-    element: <Payment/>,
+    element: <Payment />,
     isProtected: true,
-      },
-  {
-    path: "/mentor/profile/:username",
-    element: <MentorProfile />,
-    isProtected: false,
   },
+  {
+    path: "/dashboard/settings",
+    element: <Settings />,
+    isProtected: true,
+  },
+  
   {
     path: "/mentor/:username/service/:serviceId",
     element: <BookingPages />,
@@ -67,9 +58,29 @@ const routes = [
   },
   {
     path: "/mentor/:username/service/:serviceId/payment",
-    element: <PaymentPage/>,
+    element: <PaymentPage />,
     isProtected: true, // Optional: Based on your authentication logic
   },
 ];
 
-export default routes;
+export const publicRoutes=[ { path: "/", element: <Home />, isProtected: false },
+  { path: "/reset-password", element: <ResetPassword />, isProtected: false },
+  { path: "/forgot-password", element: <ForgotPassword />, isProtected: false },
+  { path: "/signin", element: <Signin />, isProtected: false },
+  {
+    path: "/signup/:role",
+    element: <Signup />,
+    isProtected: false,
+  },
+  {
+    path: "/mentor/profile/:username",
+    element: <MentorProfile />,
+    isProtected: false,
+  },
+  {
+    path: "/mentors",
+    element: <AllMentors />,
+    isProtected: false,
+  },
+]
+

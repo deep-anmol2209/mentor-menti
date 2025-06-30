@@ -2,6 +2,7 @@ import React from "react";
 import Nav from "../components/Nav";
 import { NavLink } from "react-router-dom";
 import TopMentors from "../components/TopMentors";
+import Chat from "@/components/Chat";
 import { heroHome, heroMen, shapeOne, shapeTwo, shapeThree, shapeFour, faqImage } from "../assets/HomePage";
 import MentoringImage from "../assets/About/about-img-3.png";
 import FeatureImage from "../assets/feature-img-1.png";
@@ -20,7 +21,7 @@ function Home() {
       <div className='bg-white'>
 
         {/* Hero Section */}
-        <section className='relative bg-teal-100 py-16 md:py-20 h-[560px] px-6 md:px-20 mx-auto max-w-screen-full '>
+        <section className='relative bg-teal-100 lg:py-16   md:py-20 h-[560px] px-6 md:px-20 mx-auto max-w-screen-full '>
           <img
             className='absolute bottom-0 right-0 h-[520px] opacity-5'
             src={heroHome}
@@ -361,7 +362,9 @@ function Home() {
             </div>
           </div>
         </footer>
+        <Chat/>
       </div>
+      
     </>
   );
 }

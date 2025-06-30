@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Input, Modal, Form, Spin, Select, Dropdown, Menu, DatePicker, TimePicker } from 'antd';
-import Dashboard from './dashboard';
+// import Dashboard from './dashboard';
 import { BiErrorAlt, BiCalendar, BiTime } from "react-icons/bi";
 import bookingApi from "../../apiManager/booking"
 import useUserStore from '@/store/user';
@@ -46,7 +46,7 @@ const Bookings = () => {
   }, []);
 
   const closeModal = useCallback(() => {
-    console.log("hello modal");
+    console.log("hello modal", isRescheduleModalVisible);
 
     if (isRescheduleModalVisible) {
       setIsRescheduleModalVisible(false)
@@ -54,7 +54,7 @@ const Bookings = () => {
       setIsNewSlotModalVisible(false)
     }
 
-  }, []);
+  }, [isRescheduleModalVisible, isNewSlotModalVisible]);
   const filteredBookings = bookings.filter((booking) => {
     if (activeTab === "upcoming") {
       return booking.status === 'confirmed' || booking.status === 'pending' || booking.status === 'rescheduled'; // Future bookings
@@ -433,7 +433,7 @@ const Bookings = () => {
     setIsNewSlotModalVisible(true);
 
   };
-
+ 
 
 
   const rowClassName = (record) => {
@@ -448,11 +448,11 @@ const Bookings = () => {
 
   return (
     <>
-      <Dashboard>
-        <div className='p-6 mx-auto bg-white rounded-lg shadow-lg h-full'>
+     
+        <div className='p-6 mx-auto bg-white rounded-lg shadow-lg h-full m-8 lg:mt-20'>
           <h2 className='text-2xl font-semibold text-gray-800 mb-4'>Your Bookings </h2>
 
-          <div className="flex my-6 space-x-6">
+          <div className="flex flex-wrap gap-3 my-6">
             <Button
               type={activeTab === "upcoming" ? "primary" : "default"}
               onClick={() => setActiveTab("upcoming")}
@@ -505,6 +505,7 @@ const Bookings = () => {
             </div>
           ) : (
             // Table to display booking information
+            <div className="w-full overflow-x-auto">
             <Table
               columns={activeTab==="past"?columns.filter((column)=>{ return column.title !== "Meeting Link" && column.title !=="Actions"}): columns}
               dataSource={fixedCourseFilteredBookings}
@@ -517,7 +518,9 @@ const Bookings = () => {
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
               }}
               className="rounded-lg"
+               size="small"
             />
+            </div>
           )}
           <Modal
             title={"Reschedule details"}
@@ -747,22 +750,22 @@ const Bookings = () => {
 
 
             <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md animate-fadeIn">
-              <div className="bg-white p-6 rounded-2xl shadow-2xl w-96 border border-gray-200 relative">
-                <div className='my-5'>
-                  <h3 className="text-2xl font-semibold mb-3 text-gray-900">User Details</h3>
-                  <p className="text-gray-700"><strong>Full name:</strong> {selectedBooking?.user?.name}</p>
-                  <p className="text-gray-700"><strong>Email:</strong> {selectedBooking?.user?.email}</p>
-                  <p className="text-gray-700"><strong>Username:</strong> {selectedBooking?.user?.username}</p>
+              <div className="bg-white p-3 lg:p-6 top-20 rounded-2xl shadow-2xl w-64 lg:w-96 border border-gray-200 relative">
+                <div className='my-2 lg:my-5'>
+                  <h3 className="text-lg lg:text-2xl font-semibold mb-3 text-gray-900">User Details</h3>
+                  <p className="text-gray-700 text-sm lg:text-md"><strong>Full name:</strong> {selectedBooking?.user?.name}</p>
+                  <p className="text-gray-700 text-sm lg:text-md"><strong>Email:</strong> {selectedBooking?.user?.email}</p>
+                  <p className="text-gray-700 text-sm lg:text-md"><strong>Username:</strong> {selectedBooking?.user?.username}</p>
                 </div>
 
                 <hr />
 
-                <div className='my-5'>
-                  <h3 className="text-2xl font-semibold mb-3 text-gray-900">Service Details</h3>
-                  <p className="text-gray-700"><strong>Service name:</strong> {selectedBooking?.service?.serviceName}</p>
-                  <p className="text-gray-700"><strong>Service Type:</strong> {selectedBooking?.serviceType}</p>
-                  <p className="text-gray-700"><strong>Duration:</strong> {selectedBooking?.service?.duration}</p>
-                  <p className="text-gray-700"><strong>Description:</strong> {selectedBooking?.service?.description}</p>
+                <div className='my-2 lg:my-5'>
+                  <h3 className="text-lg lg:text-2xl font-semibold mb-3 text-gray-900">Service Details</h3>
+                  <p className="text-gray-700 text-sm lg:text-md"><strong>Service name:</strong> {selectedBooking?.service?.serviceName}</p>
+                  <p className="text-gray-700 text-sm lg:text-md"><strong>Service Type:</strong> {selectedBooking?.serviceType}</p>
+                  <p className="text-gray-700 text-sm lg:text-md"><strong>Duration:</strong> {selectedBooking?.service?.duration}</p>
+                  <p className="text-gray-700 text-sm lg:text-md"><strong>Description:</strong> {selectedBooking?.service?.description}</p>
                 </div>
 
                 <button
@@ -780,7 +783,7 @@ const Bookings = () => {
             </div>
           )}
         </div>
-      </Dashboard>
+   
     </>
   )
 }

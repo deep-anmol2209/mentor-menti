@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { BiErrorAlt, BiCalendar, BiTime } from "react-icons/bi";
 import { Button, Modal, Spin } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faIndianRupeeSign} from "@fortawesome/free-solid-svg-icons";
 import { removeToken } from "@/helper";
 import { useNavigate ,useLocation, Navigate} from "react-router-dom";
 import bookingApi from "../apiManager/booking"
@@ -169,7 +171,7 @@ const ServiceCardUserSide = ({ service, username, bookings, mentor, fetchBooking
         <p className="text-gray-600 mb-4">{service.description}</p>
 
         <div className="flex justify-between items-center mb-3">
-          <span className="text-teal-600 font-semibold">${service.price}</span>
+          <span className="text-teal-600 font-semibold"><FontAwesomeIcon icon={faIndianRupeeSign} style={{color: "#0d9488",}} />{service.price}</span>
           <span className="text-sm bg-teal-100 text-teal-800 px-2 py-1 rounded">
             {service.courseType}
           </span>

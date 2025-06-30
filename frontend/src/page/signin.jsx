@@ -1,21 +1,27 @@
-import React, { useState } from 'react';
-import { NavLink, useNavigate, Link } from 'react-router-dom';
-import useUserStore from '../store/user';
-import { useForm } from 'react-hook-form';
+import React, { useState } from "react";
+import { NavLink, useNavigate, Link } from "react-router-dom";
+import useUserStore from "../store/user";
+import { useForm } from "react-hook-form";
 import auth from "../apiManager/auth";
-import { setToken } from '../helper';
-import toast from 'react-hot-toast';
-import Nav from '../components/Nav';
-
+import { setToken } from "../helper";
+import toast from "react-hot-toast";
+import Nav from "../components/Nav";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 const Signin = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { setUser } = useUserStore();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm();
-
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -26,14 +32,13 @@ const Signin = () => {
       setUser(response.data.user);
       setToken(response.data.token);
       navigate("/");
-      toast.success("Login Successfully!")
+      toast.success("Login Successfully!");
     } catch (error) {
       console.log("Singin Error :", error);
-      toast.error("Login failed! Invalid credentials")
+      toast.error("Login failed! Invalid credentials");
     }
     setIsLoading(false);
-
-  }
+  };
   return (
     <>
       <Nav />
@@ -53,14 +58,14 @@ const Signin = () => {
               onSubmit={handleSubmit(onSubmit)}
               className="mt-6 space-y-4 text-gray-800"
             >
-
               {/* Email Field */}
               <div>
                 <input
                   type="email"
                   placeholder="Email Address"
-                  className={`block w-full px-4 py-2 mt-2 placeholder-gray-500 bg-gray-100 border ${errors.email ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring focus:ring-teal-300 focus:outline-none`}
+                  className={`block w-full px-4 py-2 mt-2 placeholder-gray-500 bg-gray-100 border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring focus:ring-teal-300 focus:outline-none`}
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -77,12 +82,13 @@ const Signin = () => {
               </div>
 
               {/* Password Field */}
-              <div>
+              <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className={`block w-full px-4 py-2 mt-2 placeholder-gray-500 bg-gray-100 border ${errors.password ? "border-red-500" : "border-gray-300"
-                    } rounded-lg focus:ring focus:ring-teal-300 focus:outline-none`}
+                  className={`block w-full px-4 py-2 mt-2 placeholder-gray-500 bg-gray-100 border ${
+                    errors.password ? "border-red-500" : "border-gray-300"
+                  } rounded-lg focus:ring focus:ring-teal-300 focus:outline-none`}
                   {...register("password", {
                     required: "Password is required",
                     minLength: {
@@ -91,6 +97,12 @@ const Signin = () => {
                     },
                   })}
                 />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-[10px] cursor-pointer text-gray-500"
+                >
+                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                </span>
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-500">
                     {errors.password.message}
@@ -107,14 +119,12 @@ const Signin = () => {
                   {isLoading ? "Loading..." : "Sign In"}
                 </button>
                 <Link
-                to="/forgot-password"
-                className="mt-4 block text-sm text-center cursor-pointer hover:underline text-teal-600"
-              >
-                Forgot password?
-              </Link>
+                  to="/forgot-password"
+                  className="mt-4 block text-sm text-center cursor-pointer hover:underline text-teal-600"
+                >
+                  Forgot password?
+                </Link>
               </div>
-
-              
             </form>
 
             {/* Studnet signup link */}
@@ -128,14 +138,11 @@ const Signin = () => {
               </NavLink>
               .
             </p>
-
-
           </div>
         </div>
       </div>
-
     </>
-  )
-}
+  );
+};
 
 export default Signin;

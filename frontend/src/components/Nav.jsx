@@ -59,7 +59,7 @@ function Nav() {
 
   return (
     <>
-      <div className={`h-[100px] sticky top-0 z-50 transition-all duration-500 ${isScrolled ? "bg-teal-50" : "bg-white"}`}>
+      <div className={` sticky top-0 z-50 transition-all duration-500 ${isScrolled ? "bg-teal-50" : "bg-white"}`}>
         <div className='px-4 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-20'>
           <div className='realtive flex items-center justify-between'>
             <div className='flex items-center'>
@@ -68,11 +68,11 @@ function Nav() {
                 className='inline-flex items-center mr-8'
               >
                 <img
-                  className='h-[80px] sm:h-[100px] w-[80px] sm:w-[100px]'
+                  className='h-[50px] lg:h-[100px] w-[50px] lg:w-[100px]'
                   src={eduHubLogo}
                   alt='Mentorship Hub'
                 />
-                <span className='text-4xl font-bold text-teal-700'>EduHub</span>
+                <span className='text-xl lg:text-4xl font-bold text-teal-700'>EduHub</span>
               </NavLink>
             </div>
 
@@ -122,44 +122,33 @@ function Nav() {
               </Dropdown>
             )}
 
-            {/* when isMobileMenuOpen is true */}
-            {!user && isMobileMenuOpen && (
-              <div className='absolute top-[100px] left-0 w-full bg-white shadow-lg p-4 space-y-4 lg:hidden z-10'>
-                <div className='py-5 flex flex-col gap-4'>
-                  {/* Mentor Section */}
-                  {/* <button
-                    className='block w-full text-center py-2 font-medium tracking-wide text-gray-800 border-4 border-teal-500 bg-teal-500 rounded-md hover:bg-teal-600 transition-all duration-300 hover:text-white'
-                    onClick={signupMentorBtnClick}
-                  >
-                    Become a Mentor with Us
-                  </button> */}
+{!user && (
+  <div
+    className={`
+      absolute top-[50px] left-0 w-full bg-white shadow-lg p-4 space-y-4 lg:hidden z-10
+      transition-all duration-300 ease-in-out
+      overflow-hidden
+      ${isMobileMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}
+    `}
+  >
+    <div className="py-5 flex flex-col gap-4">
+      <button
+        className="font-medium tracking-wide  transition-all duration-300 px-6 h-11 rounded hover:border hover:bg-teal-600 text-white bg-teal-500"
+        onClick={signInBtnClick}
+      >
+        Sign In
+      </button>
 
-                  {/* Signin */}
-                  {/* <button
-                    className='block w-full text-center py-2 font-medium tracking-wide text-teal-500 hover:text-teal-700 transition-all duration-300'
-                    onClick={signInBtnClick}
-                  >
-                    Sign In
-                  </button> */}
-                  
-                  <button
-                    className='font-medium tracking-wide text-teal-500 hover:text-teal-700 transition-all duration-300 px-6 h-12 rounded hover:border hover:border-teal-700'
-                    onClick={signInBtnClick}
-                  >
-                    Sign In
-                  </button>
-                
+      <button
+        className="block w-full text-center py-2 font-medium tracking-wide text-white bg-teal-500 rounded-md hover:bg-teal-600 transition-all duration-300"
+        onClick={signupStudentBtnClick}
+      >
+        Register
+      </button>
+    </div>
+  </div>
+)}
 
-                  {/* SignUp */}
-                  <button
-                    className='block w-full text-center py-2 font-medium tracking-wide text-white bg-teal-500 rounded-md hover:bg-teal-600 transition-all duration-300'
-                    onClick={signupStudentBtnClick}
-                  >
-                    Register
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

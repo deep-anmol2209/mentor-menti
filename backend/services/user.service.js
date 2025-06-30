@@ -67,7 +67,19 @@ const findUserByEmail = async (email) => {
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); 
     return await passwordChangeLogModel.findOneAndUpdate({tokenUsed: token}, {expiredAt: expiresAt, otp: newotp } ,{new: true})
   }
+
+  const updatePasswordById=async(userId, newPassword)=>{
+    console.log("update");
+    
+    const user= await UserModel.findById(userId).select('+password');
+    
+   user.password= newPassword;
+   return await user.save()
+  }
   
+  const deletePhotoById= async(userId)=>{
+    return await UserModel.findByIdAndUpdate(userId, {photoUrl: ""}, {new: true})
+  }
 module.exports = {
     getUserById,
     updateUser,
@@ -77,6 +89,8 @@ module.exports = {
     createOtpDoc,
     updatePasswordByEmail,
     updateResetEntry,
-    updateExpiredTime
+    updateExpiredTime,
+    updatePasswordById,
+    deletePhotoById
 
 }

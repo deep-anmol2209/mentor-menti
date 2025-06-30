@@ -48,8 +48,8 @@ const createOrder = async (req, res) => {
         product_name: name,
         description,
         contact: "9999999999",
-        name: "Avtar singh",
-        email: "officialavtar13@gmail.com",
+        name: mentorName,
+        email: mentorEmail,
       });
     });
   } catch (error) {

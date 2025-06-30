@@ -1,8 +1,10 @@
 
 const cloudinary = require("cloudinary").v2;
+const { default: mongoose } = require("mongoose");
 const config = require("../config");
 const userService = require("../services/user.service");
 const httpStatus = require("../util/httpStatus");
+const UserModel = require("../models/user.model");
 
 
 cloudinary.config(config.cloudinary);
@@ -77,8 +79,91 @@ const updateUserProfile = async(req,res,next)=>{
     });
 };
 
+const changePasswordById= async(req, res, next)=>{
+    try{
+    const userId= req.user._id
+
+    const {oldPassword, newPassword}= req.body
+
+    if(!oldPassword || !newPassword){
+        return res.status(httpStatus.badRequest).json({
+            success: false,
+            message: "old and new password is required"
+        })
+    }
+
+    if(!userId || !mongoose.Types.ObjectId.isValid(userId)){
+        return res.status(httpStatus.badRequest).json({
+            success: false,
+            message: "userId is missing or invalid"
+        })
+    }
+
+    const user= await UserModel.findById(userId).select("+password");
+    console.log("user:",user);
+    console.log("oldpassword: ", oldPassword);
+    
+    if(!user || !(await user.isPasswordMatch(oldPassword))){
+        
+        throw new ApiError(httpStatus.forbidden,"your old password is incorrect");
+    }
+
+    const updatePassword= await userService.updatePasswordById(userId,newPassword);
+
+    if(!updatePassword){
+       return res.status(httpStatus.internalServerError).json({success: false, 
+        message: "error in updating password"
+       }) 
+    }
+
+    return res.status(httpStatus.ok).json({success: true,
+        message: "password updated"
+    })
+    }catch(error){
+        console.log(error);
+        
+        return res.status(httpStatus.internalServerError).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
+
+const removePhoto=(req, res , next)=>{
+    try{
+    const userId = req.user._id;
+
+    if(!userId || !mongoose.Types.ObjectId.isValid(userId)){
+        return res.status(httpStatus.badRequest).json({
+            success: false,
+            message: "userId is missing or invalid"
+        })
+    }
+
+    const del_photo= userService.deletePhotoById(userId);
+
+    if(!del_photo){
+        return res.status(httpStatus.badRequest).json({
+            success: false,
+            message: "photo not deleted"
+        })
+    }
+
+    return res.status(httpStatus.ok).json({success: true,
+        message: "photo deleted"
+    })
+}catch(error){
+      return res.status(httpStatus.internalServerError).json({
+        success: false,
+        message: error.message
+    })
+}
+}
+
 module.exports = {
     uploadPhoto,
     getUser,
-    updateUserProfile
+    updateUserProfile,
+    changePasswordById,
+    removePhoto
 };

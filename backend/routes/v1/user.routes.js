@@ -5,6 +5,7 @@ const asyncHandler = require("../../helper/asyncHandler");
 const validate  = require("../../middleware/validate");
 const { updateUserProfileValidation } = require("../../validations/user.validation");
 const upload = require("../../middleware/upload");
+const httpStatus = require("../../util/httpStatus");
 
 const router = express.Router();
 
@@ -21,5 +22,7 @@ router.put("/update-profile",
     validate(updateUserProfileValidation),
     asyncHandler(userController.updateUserProfile)
 )
+router.patch("/change-password", authMiddleware.protect, asyncHandler(userController.changePasswordById));
 
+router.patch("/remove-photo", authMiddleware.protect, asyncHandler(userController.removePhoto));
 module.exports = router;

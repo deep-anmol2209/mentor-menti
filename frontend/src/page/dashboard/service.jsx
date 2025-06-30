@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import Dashboard from "./dashboard";
+// import Dashboard from "./dashboard";
 import ServiceCard from "../../components/ServiceCard";
 import service from "../../apiManager/service";
 import { Button, Input, Modal, Form, Spin, Select, DatePicker, TimePicker } from "antd";
@@ -161,8 +161,8 @@ const Services = () => {
   }, [form]);
 
   return (
-    <Dashboard>
-      <div className='p-6'>
+   
+    <div className="p-6 lg:mt-20 ">
         <div className='flex items-center justify-between mb-6'>
           <h2 className='text-2xl font-semibold'>Your Services</h2>
           <Button
@@ -365,7 +365,7 @@ const Services = () => {
         </Modal>
 
         <Spin spinning={loading}>
-          <div className='grid grid-cols-1 gap-6 mt-6 md:grid-cols-1 lg:grid-cols-2'>
+          <div className='grid grid-cols-1 gap-6 mt-6 md:grid-cols-1 lg:grid-cols-2 lg:overflow-y-visible overflow-y-auto h-[calc(100vh-80px)] lg:h-auto'>
             {services.map((service) => (
               <ServiceCard
                 key={service._id}
@@ -376,7 +376,7 @@ const Services = () => {
           </div>
         </Spin>
       </div>
-    </Dashboard>
+
   );
 };
 

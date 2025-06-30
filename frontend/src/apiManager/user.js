@@ -1,3 +1,4 @@
+import axios from "axios";
 import AxiosInstances from "./index";
 
 const uploadImage = async (formData) => {
@@ -12,6 +13,14 @@ const updateUser = async (data) => {
   
   return await AxiosInstances.put("/user/update-profile", data);
 };
-const userAPI = { uploadImage, getUser, updateUser };
+
+const deletePhoto = async ()=>{
+  return await AxiosInstances.patch('/user/remove-photo')
+};
+
+const changePassword = async(data) =>{
+  return await AxiosInstances.patch('/user/change-password', data)
+}
+const userAPI = { uploadImage, getUser, updateUser,deletePhoto, changePassword };
 
 export default userAPI;

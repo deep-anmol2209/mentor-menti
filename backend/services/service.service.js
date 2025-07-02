@@ -1,5 +1,5 @@
 const {ServiceModel} = require("../models/service.model");
-
+const mongoose = require("mongoose")
 const createService = async(serviceData) =>{
     return await ServiceModel.create(serviceData);
 };
@@ -26,63 +26,69 @@ const isSameDate = (date1, date2) => {
   };
   
   // Improved time slot checking
-  const isTimeSlotAvailable = async (serviceId, bookingDate, startTime, endTime) => {
+  const isTimeSlotAvailable = async (mentorId, newAvailability) => {
     try {
-      // 1. Find the service
-      const service = await ServiceModel.findById(serviceId).lean();
-      if (!service) {
-        console.error("Service not found");
-        return false;
+    const services = await ServiceModel.find({ mentor: mentorId }).lean();
+    
+    
+    if (!services.length) return true;
+    
+    const toDateTime = (date, timeStr) => {
+      const [hours, minutes] = timeStr.split(":").map(Number);
+      const dt = new Date(date);
+      dt.setUTCHours(hours, minutes, 0, 0);
+      return dt;
+    };
+    
+    for (const newEntry of newAvailability) {
+      const newDate = new Date(newEntry.date);
+      newDate.setUTCHours(0, 0, 0, 0);
+    
+      for (const newSlot of newEntry.timeSlots) {
+        const newStart = toDateTime(newDate, newSlot.startTime);
+        const newEnd = toDateTime(newDate, newSlot.endTime);
+    
+        for (const service of services) {
+          if (!Array.isArray(service.availability)) continue;
+    
+          const existingDay = service.availability.find(entry => {
+            const entryDate = new Date(entry.date);
+            entryDate.setUTCHours(0, 0, 0, 0);
+            return entryDate.getTime() === newDate.getTime();
+          });
+    
+          if (!existingDay) continue;
+    
+          const conflict = existingDay.timeSlots.some(slot => {
+            if (slot._id && newSlot._id && slot._id.toString() === newSlot._id.toString()) {
+              return false;
+            }
+          
+            const existingStart = toDateTime(newDate, slot.startTime);
+            const existingEnd = toDateTime(newDate, slot.endTime);
+          
+            return (
+              (newStart >= existingStart && newStart < existingEnd) ||
+              (newEnd > existingStart && newEnd <= existingEnd) ||
+              (newStart <= existingStart && newEnd >= existingEnd)
+            );
+          });
+          
+    
+          if (conflict) {
+            console.log(`⛔ Conflict on ${newDate.toISOString()} between ${newSlot.startTime} - ${newSlot.endTime}`);
+            return false;
+          }
+        }
       }
-  
-      // 2. Check availability array
-      if (!Array.isArray(service.availability)) {
-        console.error("Service availability is not an array");
-        return false;
-      }
-  
-      // 3. Normalize dates to compare just the date part
-      const requestedDate = new Date(bookingDate);
-      requestedDate.setUTCHours(0, 0, 0, 0);
-  
-      console.log('Checking availability for:', {
-        requestedDate: requestedDate.toISOString(),
-        startTime,
-        endTime,
-        availabilityDates: service.availability.map(a => a.date)
-      });
-  
-      // 4. Find matching availability day
-      const dayAvailability = service.availability.find(entry => {
-        if (!entry?.date) return false;
-        const entryDate = new Date(entry.date);
-        entryDate.setUTCHours(0, 0, 0, 0);
-        return entryDate.getTime() === requestedDate.getTime();
-      });
-  
-      if (!dayAvailability) {
-        console.log('No availability found for this date');
-        return false;
-      }
-  
-      console.log('Day availability found:', {
-        date: dayAvailability.date,
-        timeSlots: dayAvailability.timeSlots
-      });
-  
-      // 5. Check if the exact time slot exists
-      const timeSlotExists = dayAvailability.timeSlots.some(
-        slot => slot.startTime === startTime && slot.endTime === endTime
-      );
-  
-      console.log('Time slot exists:', timeSlotExists);
-      return timeSlotExists;
-  
-    } catch (err) {
-      console.error("Error in isTimeSlotAvailable:", err);
-      return false;
     }
-  };
+    
+    return true;
+    }catch(error){
+      console.log(error);
+      
+    }}
+  
 const getServiceByMentor = async(mentorId) => {
     return await ServiceModel.find({mentor:mentorId})
 };

@@ -4,7 +4,8 @@ const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
 
 // One time slot object
 const timeSlotSchema = Joi.object({
-  startTime: Joi.string().pattern(timePattern).required(),
+  _id: Joi.string().strip(),
+    startTime: Joi.string().pattern(timePattern).required(),
   endTime: Joi.string().pattern(timePattern).required(),
 });
 

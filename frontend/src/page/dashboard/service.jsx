@@ -48,13 +48,22 @@ const Services = () => {
         const { active, availability = [], fixedStartTime, fixedEndTime, fromDate, toDate, ...rest } = editingService;
         
         // Transform availability for form
-        const formAvailability = availability.flatMap(dateSlot => 
+        // const formAvailability = availability.flatMap(dateSlot => 
+        //   dateSlot.timeSlots?.map(timeSlot => ({
+        //     date: dateSlot.date ? dayjs(dateSlot.date) : null,
+        //     startTime: timeSlot.startTime ? dayjs(timeSlot.startTime, "HH:mm") : null,
+        //     endTime: timeSlot.endTime ? dayjs(timeSlot.endTime, "HH:mm") : null
+        //   })) || []
+        // );
+
+        const formAvailability = availability.flatMap(dateSlot =>
           dateSlot.timeSlots?.map(timeSlot => ({
-            date: dateSlot.date ? dayjs(dateSlot.date) : null,
-            startTime: timeSlot.startTime ? dayjs(timeSlot.startTime, "HH:mm") : null,
-            endTime: timeSlot.endTime ? dayjs(timeSlot.endTime, "HH:mm") : null
+          _id: timeSlot._id, // ✅ include it
+          date: dateSlot.date ? dayjs(dateSlot.date) : null,
+          startTime: timeSlot.startTime ? dayjs(timeSlot.startTime, "HH:mm") : null,
+          endTime: timeSlot.endTime ? dayjs(timeSlot.endTime, "HH:mm") : null
           })) || []
-        );
+          );
 
         form.setFieldsValue({
           ...rest,
@@ -106,10 +115,11 @@ const Services = () => {
           .map(slot => ({
             date: slot.date.format("YYYY-MM-DD"),
             timeSlots: [{
-              startTime: slot.startTime.format("HH:mm"),
-              endTime: slot.endTime.format("HH:mm")
+            _id: slot._id, // ✅ include existing ID if present
+            startTime: slot.startTime.format("HH:mm"),
+            endTime: slot.endTime.format("HH:mm")
             }]
-          }));
+            }));
       }
     }
 

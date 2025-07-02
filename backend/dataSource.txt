@@ -1,1 +1,45 @@
-Education Hub is a online learning Platform where mentors can create account give services to other users like students , student can create account and search for mentors and their services to study. This platform is developed by Anmol and Avtar 
+{
+  "faqs": [
+    {
+      "question": "How do I book a 1-on-1 session?",
+      "answer": "Go to a mentor's profile → select '1-on-1' → pick a date & time slot → click 'Book' → follow payment steps. You'll receive confirmation once payment is complete."
+    },
+    {
+      "question": "What is a fixed-course?",
+      "answer": "A fixed-course is a multi-session class scheduled by mentors on specific dates and times (e.g., a 7-day workshop). It’s booked as a whole, not sessions individually."
+    },
+    {
+      "question": "How can I reschedule or cancel?",
+      "answer": "Go to 'My Bookings' in your dashboard → choose the session → click 'Reschedule' or 'Cancel'. Reschedule options depend on the mentor’s availability and cancellation policy."
+    },
+    {
+      "question": "What if payment fails?",
+      "answer": "Don’t worry! The slot holds for 15 minutes. If payment isn’t completed in time, the slot will be released automatically. You can try booking again."
+    },
+    {
+      "question": "How do I become a mentor?",
+      "answer": "Click 'Become Mentor' → complete your profile → add your availability and services → submit. Our team will review and approve your mentor account shortly."
+    },
+    {
+      "question": "Can I change my availability?",
+      "answer": "Yes! Go to 'Dashboard → Schedule' → edit or add time slots (for 1-on-1) or update dates (for fixed courses). Don’t forget to save your changes."
+    },
+    {
+      "question": "What’s your refund policy?",
+      "answer": "Refund rules are defined per mentor. Check each course’s page for specific refund/cancellation terms before booking."
+    },
+    {
+      "question": "How secure is my data?",
+      "answer": "We use encrypted connections (HTTPS), secure storage, and follow privacy best practices. Your info is never shared without consent."
+    },
+    {
+      "question": "Need more help?",
+      "answer": "Contact our support at support@mentor‑menti.com or visit the Help Center for articles and guides."
+    },
+
+    {
+      "question": "I need help  how can i contact for support?",
+      "answer": "Contact our support at support@mentor‑menti.com or visit the Help Center for articles and guides."
+    }
+  ]
+}

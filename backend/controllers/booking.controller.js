@@ -16,17 +16,31 @@ const initiateBookingAndPayment = async (req, res) => {
   // ONE-ON-ONE: Check slot availability and conflicts
   if (service.courseType === "one-on-one") {
     const { startTime, endTime } = req.body;
-
+ console.log("bookingdate: ",bookingDate);
+ console.log("newDate: ", new Date(bookingDate));
+ 
+ 
     // Existing slot availability checks...
+    // const isSlotTaken = await BookingModel.exists({
+    //   mentor: service.mentor,
+    //   serviceType: 'one-on-one',
+    //   status: { $ne: 'cancelled' },
+    //   bookingDate: new Date(bookingDate),
+    //   $and: [
+    //     { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
+    //   ]
+    // });
+
     const isSlotTaken = await BookingModel.exists({
       mentor: service.mentor,
       serviceType: 'one-on-one',
       status: { $ne: 'cancelled' },
       bookingDate: new Date(bookingDate),
-      $or: [
-        { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
-      ]
+      startTime: { $ne: endTime },
+      endTime: { $ne: startTime }
     });
+    
+console.log(isSlotTaken);
 
     if (isSlotTaken) {
       return res.status(400).json({

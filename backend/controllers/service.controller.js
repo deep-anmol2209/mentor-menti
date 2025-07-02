@@ -115,31 +115,39 @@ const updateService = async (req, res, next) => {
     }
 
     if (courseType === 'one-on-one') {
-      if (!Array.isArray(availability) || availability.length === 0) {
-        return res.status(httpStatus.badRequest).json({ 
-          success: false, 
-          message: "Availability is required for one-on-one." 
-        });
-      }
 
-      // Validate each availability entry
-      for (const slot of availability) {
-        if (!slot.date || !Array.isArray(slot.timeSlots) || slot.timeSlots.length === 0) {
-          return res.status(httpStatus.badRequest).json({ 
-            success: false, 
-            message: "Each availability entry must have a date and at least one time slot." 
-          });
-        }
+      const result = await serviceService.isTimeSlotAvailable(mentorId, availability)
+      console.log("result: ", result);
+if(!result){
+return res.status(httpStatus.badRequest).json({success: false, message: "slot conflict"})
+}
+      
+      
+      // if (!Array.isArray(availability) || availability.length === 0) {
+      //   return res.status(httpStatus.badRequest).json({ 
+      //     success: false, 
+      //     message: "Availability is required for one-on-one." 
+      //   });
+      // }
 
-        for (const time of slot.timeSlots) {
-          if (!time.startTime || !time.endTime) {
-            return res.status(httpStatus.badRequest).json({ 
-              success: false, 
-              message: "Each time slot must have startTime and endTime." 
-            });
-          }
-        }
-      }
+      // // Validate each availability entry
+      // for (const slot of availability) {
+      //   if (!slot.date || !Array.isArray(slot.timeSlots) || slot.timeSlots.length === 0) {
+      //     return res.status(httpStatus.badRequest).json({ 
+      //       success: false, 
+      //       message: "Each availability entry must have a date and at least one time slot." 
+      //     });
+      //   }
+
+      //   for (const time of slot.timeSlots) {
+      //     if (!time.startTime || !time.endTime) {
+      //       return res.status(httpStatus.badRequest).json({ 
+      //         success: false, 
+      //         message: "Each time slot must have startTime and endTime." 
+      //       });
+      //     }
+      //   }
+      // }
     }
 
     // Update the service

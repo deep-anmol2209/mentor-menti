@@ -179,8 +179,10 @@ import { faChalkboardUser } from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import { FaPhone, FaEdit } from "react-icons/fa";
 import dayjs from "dayjs";
+import { useState } from "react";
 
 const ServiceCard = ({ service, onEdit }) => {
+  const [showFullDesc, setShowFullDesc] = useState(false);
   // Helper function to format date
   const formatDate = (dateString) => {
     return dateString ? dayjs(dateString).format("MMM D, YYYY") : "N/A";
@@ -202,6 +204,8 @@ const ServiceCard = ({ service, onEdit }) => {
   // };
 
   const groupAvailabilityByDate = (availability) => {
+   
+
     if (!availability || !Array.isArray(availability)) return {};
 
     return availability.reduce((acc, dateSlot) => {
@@ -223,112 +227,156 @@ const ServiceCard = ({ service, onEdit }) => {
   const groupedAvailability = groupAvailabilityByDate(service?.availability);
 
   return (
-    <div className="relative flex flex-col justify-between p-6 mb-6 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
+    <div className="relative flex flex-col justify-between p-6 mb-6 max-w-[300px] sm:max-w-[500px] bg-white/80 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-md hover:shadow-lg max-h-fit transition-shadow duration-300">
       <div>
         {/* Top: Icon + Title + Status */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex justify-center items-center p-2 bg-teal-100 rounded-full w-8 h-8">
-            <FontAwesomeIcon
-              icon={faChalkboardUser}
-              size="sm"
-              className="text-teal-600"
-            />
-          </div>
-          <h3 className="text-xl lg:text-2xl font-semibold text-gray-900">
-            {service?.serviceName}
-          </h3>
+        <div className="flex flex-col  justify-between items-start  gap-4 mb-4">
+          {/* <div className="flex justify-between w-full items-center gap-3"> */}
+           
+            <div className="flex justify-end w-full">
+              <span
+                className={` text-xs font-medium px-3 py-1 rounded-full ${service?.active
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-700"
+                  }`}
+              >
+                {service?.active ? "Enabled" : "Disabled"}
+              </span>
+            </div>
+            <div className="flex flex-grow gap-5 items-center">
+              <div className="flex justify-center items-center p-2 bg-teal-100 rounded-full w-8 h-8">
+                <FontAwesomeIcon
+                  icon={faChalkboardUser}
+                  size="sm"
+                  className="text-teal-600"
+                />
+              </div>
+
+              <h3 className="text-md md:text-xl lg:text-2xl font-semibold text-gray-900">
+                {service?.serviceName}
+              </h3>
+
+
+            </div>
+          {/* </div> */}
+
+
         </div>
 
-        <span
-          className={`absolute top-5 right-5 text-xs font-medium px-3 py-1 rounded-full ${
-            service?.active
-              ? "bg-green-100 text-green-700"
-              : "bg-red-100 text-red-700"
-          }`}
-        >
-          {service?.active ? "Enabled" : "Disabled"}
-        </span>
-      </div>
+        {/* Description */}
+        {/* Description */}
+<p className="mb-4 text-gray-600 text-sm">
+  {service?.description && (
+    <>
+      {showFullDesc
+        ? service.description
+        : (
+          <>
+            {service.description.slice(0, 100)}
+            {service.description.length > 100 && (
+              <>
+                ...{" "}
+                <button
+                  onClick={() => setShowFullDesc(true)}
+                  className="text-blue-600 hover:underline focus:outline-none inline text-xs font-semibold"
+                >
+                  See more
+                </button>
+              </>
+            )}
+          </>
+        )}
+      {showFullDesc && service.description.length > 100 && (
+        <>
+          {" "}
+          <button
+            onClick={() => setShowFullDesc(false)}
+            className="text-blue-600 hover:underline focus:outline-none inline text-xs font-semibold"
+          >
+            See less
+          </button>
+        </>
+      )}
+    </>
+  )}
+</p>
 
-      {/* Description */}
-      <p className="mb-4 text-gray-600 text-sm">{service?.description}</p>
+  
 
-      {/* Grid Info */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 text-gray-800 text-[12px] lg:text-sm mb-3 lg:mb-5">
-        <Info label="Price" value={`₹${service?.price}`} />
-        <Info
-          label="Duration"
-          value={`${
-            service?.duration > 60
+        {/* Grid Info */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 text-gray-800 text-[12px] lg:text-sm mb-3 lg:mb-5">
+          <Info label="Price" value={`₹${service?.price}`} />
+          <Info
+            label="Duration"
+            value={`${service?.duration > 60
               ? service?.duration / 60 + " Hrs"
               : service?.duration + " Mins"
-          }`}
-        />
-        <Info
-          label="Course Type"
-          value={
-            service?.courseType === "one-on-one" ? "One-on-One" : "Fixed Course"
-          }
-        />
-      </div>
+              }`}
+          />
+          <Info
+            label="Course Type"
+            value={
+              service?.courseType === "one-on-one" ? "One-on-One" : "Fixed Course"
+            }
+          />
+        </div>
 
-      {service?.courseType === "fixed-course" ? (
-        <>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 text-gray-800 text-[12px] lg:text-sm mb-3 lg:mb-5">
-            <Info label="From Date" value={formatDate(service?.fromDate)} />
-            <Info label="To Date" value={formatDate(service?.toDate)} />
-            <Info label="Start Time" value={service?.fixedStartTime || "N/A"} />
-            <Info label="End Time" value={service?.fixedEndTime || "N/A"} />
-          </div>
-          <div className="w-full">
-            <p className="text-gray-600 text-[12px] lg:text-lg mb-1">
-              Days in Week:
-            </p>
-            <div className="flex flex-wrap gap-2 pb-2">
-              {service?.fixedDays?.length > 0 ? (
-                service.fixedDays.map((day, idx) => (
-                  <span
-                    key={idx}
-                    className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-medium"
-                  >
-                    {day}
-                  </span>
-                ))
-              ) : (
-                <span className="text-gray-500 italic">No days selected</span>
-              )}
+        {service?.courseType === "fixed-course" ? (
+          <>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-4 text-gray-800 text-[12px] lg:text-sm mb-3 lg:mb-5">
+              <Info label="From Date" value={formatDate(service?.fromDate)} />
+              <Info label="To Date" value={formatDate(service?.toDate)} />
+              <Info label="Start Time" value={service?.fixedStartTime || "N/A"} />
+              <Info label="End Time" value={service?.fixedEndTime || "N/A"} />
             </div>
-          </div>
-        </>
-      ) : (
-        <div className="sm:col-span-2 lg:col-span-3">
-          <p className="text-gray-800 text-[12px] lg:text-mdmb-1">
-            Availability:
-          </p>
-          {Object.keys(groupedAvailability).length === 0 ? (
-            <p className="text-gray-500 italic">No availability slots</p>
-          ) : (
-            Object.entries(groupedAvailability).map(([date, timeSlots]) => (
-              <div key={date} className="flex items-center">
-                <div className="text-gray-700 text-[12px] lg:text-md font-bold my-2">
-                  {date}
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {timeSlots.map((slot, idx) => (
-                      <span
-                        key={idx}
-                        className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
-                      >
-                        {slot.startTime} - {slot.endTime}
-                      </span>
-                    ))}
+            <div className="w-full">
+              <p className="text-gray-600 text-[12px] lg:text-lg mb-1">
+                Days in Week:
+              </p>
+              <div className="flex flex-wrap gap-2 pb-2">
+                {service?.fixedDays?.length > 0 ? (
+                  service.fixedDays.map((day, idx) => (
+                    <span
+                      key={idx}
+                      className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-medium"
+                    >
+                      {day}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-500 italic">No days selected</span>
+                )}
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="sm:col-span-2 lg:col-span-3">
+            <p className="text-gray-800 text-[12px] lg:text-mdmb-1">
+              Availability:
+            </p>
+            {Object.keys(groupedAvailability).length === 0 ? (
+              <p className="text-gray-500 italic">No availability slots</p>
+            ) : (
+              Object.entries(groupedAvailability).map(([date, timeSlots]) => (
+                <div key={date} className="flex items-center">
+                  <div className="text-gray-700 text-[12px] lg:text-md font-bold my-2">
+                    {date}
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      {timeSlots.map((slot, idx) => (
+                        <span
+                          key={idx}
+                          className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium"
+                        >
+                          {slot.startTime} - {slot.endTime}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          )}
-        </div>
-      )}
+              ))
+            )}
+          </div>
+        )}
       </div>
 
       {/* Action: Edit */}

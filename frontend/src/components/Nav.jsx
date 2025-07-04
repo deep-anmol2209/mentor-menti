@@ -83,7 +83,7 @@ function Nav() {
                   onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                   className='text-gray-600 focus:outline-none'
                 >
-                  <span className='text-3xl'>&#9776;</span>
+                  <span className='lg:text-3xl text-xl'>&#9776;</span>
                 </button>
               </div>
             )}
@@ -118,7 +118,7 @@ function Nav() {
                 size="large"
                 
               >
-                <button className='bg-teal-500 px-4 py-3 rounded-full hover:bg-teal-600 lg:text-4xl text-white font-semibold lg:w-[67px] text-2xl w-[57px]'>{user.name.charAt(0).toUpperCase()}</button>
+                <button className='bg-teal-500 lg:px-4 lg:py-3 px-1 py-1 rounded-full hover:bg-teal-600 lg:text-4xl text-white font-semibold lg:w-[67px] text-xl w-[36px]'>{user.name.charAt(0).toUpperCase()}</button>
               </Dropdown>
             )}
 

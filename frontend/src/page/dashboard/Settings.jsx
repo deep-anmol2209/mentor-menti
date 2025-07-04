@@ -109,7 +109,7 @@ const handleUpdatePassword = async (values) => {
           <Form.Item
             label="New Password"
             name="newPassword"
-            rules={[{ required: true, message: "New Password is Required" }]}
+            rules={[{ required: true , message: "New Password is Required" }]}
           >
             <Input.Password
               type={passwordVisibility.newPassword ? "text" : "password"}
@@ -121,6 +121,7 @@ const handleUpdatePassword = async (values) => {
                   className="cursor-pointer"
                 />
               )}
+            minLength={6}
             />
           </Form.Item>
 

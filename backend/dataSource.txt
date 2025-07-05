@@ -1,5 +1,10 @@
 {
   "faqs": [
+
+    {
+"question": "tell me about this platform?".
+"answer": "this a online learning platform where anyone can create account as a mentor or as a student mentor can give their services like one-on-one sessions and fixed course"
+    },
     {
       "question": "How do I book a 1-on-1 session?",
       "answer": "Go to a mentor's profile → select '1-on-1' → pick a date & time slot → click 'Book' → follow payment steps. You'll receive confirmation once payment is complete."

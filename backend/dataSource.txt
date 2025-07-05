@@ -10,7 +10,7 @@
     },
     {
       "question": "How can I reschedule or cancel?",
-      "answer": "Go to 'My Bookings' in your dashboard → choose the session → click 'Reschedule' or 'Cancel'. Reschedule options depend on the mentor’s availability and cancellation policy."
+      "answer": " only for mentor profile Go to 'My Bookings' in your dashboard → choose the session → click 'Reschedule' or 'Cancel'. Reschedule options depend on the mentor’s availability and cancellation policy."
     },
     {
       "question": "What if payment fails?",
@@ -18,28 +18,25 @@
     },
     {
       "question": "How do I become a mentor?",
-      "answer": "Click 'Become Mentor' → complete your profile → add your availability and services → submit. Our team will review and approve your mentor account shortly."
+      "answer": "Click 'Become Mentor' → complete your profile → add your availability and services → submit."
     },
     {
       "question": "Can I change my availability?",
-      "answer": "Yes! Go to 'Dashboard → Schedule' → edit or add time slots (for 1-on-1) or update dates (for fixed courses). Don’t forget to save your changes."
+      "answer": "Yes! Go to 'Dashboard → Services' → edit or add time slots (for 1-on-1) or update dates (for fixed courses). Don’t forget to save your changes."
     },
-    {
-      "question": "What’s your refund policy?",
-      "answer": "Refund rules are defined per mentor. Check each course’s page for specific refund/cancellation terms before booking."
-    },
+    
     {
       "question": "How secure is my data?",
       "answer": "We use encrypted connections (HTTPS), secure storage, and follow privacy best practices. Your info is never shared without consent."
     },
     {
       "question": "Need more help?",
-      "answer": "Contact our support at support@mentor‑menti.com or visit the Help Center for articles and guides."
+      "answer": "Contact our support at eduhub.caree@gmail.com or visit the Help Center for articles and guides."
     },
 
     {
       "question": "I need help  how can i contact for support?",
-      "answer": "Contact our support at support@mentor‑menti.com or visit the Help Center for articles and guides."
+      "answer": "Contact our support at eduhub.caree@gmail.com or visit the Help Center for articles and guides."
     }
   ]
 }

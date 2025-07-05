@@ -4,6 +4,7 @@ import { Spin } from "antd";
 import { useParams } from "react-router-dom";
 import mentorApi from "@/apiManager/mentor";
 import bookingApi from "@/apiManager/booking";
+import noImage from "../public/assets/no-image.webp"
 import { BiErrorAlt } from "react-icons/bi";
 import ServiceCardUserSide from "@/components/ServiceCardUserSide";
 
@@ -95,12 +96,22 @@ const MentorProfile = () => {
           {/* Profile Left Section */}
           <div className='sticky top-40 bg-teal-50 w-1/3 rounded-xl p-5 max-h-fit flex flex-col items-center'>
             {/* Image and Social link section */}
+            
             <div className='rounded-full '>
-              <img
+            {
+              mentor.photoUrl? (
+                <img
                 src={mentor.photoUrl}
                 alt='Mentor Profile Image'
                 className='rounded-full  border-teal-500'
               />
+              ):  <img
+              className='z-5 object-cover  h-full rounded-full shadow-md'
+              src={noImage}
+              alt='Profile Image Not Found'
+            />
+            }
+              
             </div>
 
             {/* Mentor Profile Section */}

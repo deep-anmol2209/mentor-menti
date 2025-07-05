@@ -27,18 +27,18 @@ const MentorCard = ({ mentor, handleClick }) => {
       className='max-h-max shadow-xl border border-teal-300 rounded-lg cursor-pointer hover:scale-105 transition-all ease-in-out duration-500'
       onClick={handleClick}
       >
-        <div className='bg-white rounded-lg h-[400px] md:h-[500px] flex flex-col '>
+        <div className='bg-white rounded-lg h-[400px] md:h-[500px] flex items-center flex-col '>
           {/* Card left section */}
-          <div className='w-full h-[250px] overflow-hidden rounded'>
+          <div className=' h-[250px] overflow-hidden rounded mt-2'>
             {mentor?.photoUrl ? (
               <img
-                className='z-5 object-contain w-full h-full rounded-lg shadow-md'
+                className='z-5 object-contain m-aoto rounded-full h-full shadow-md'
                 src={mentor.photoUrl}
                 alt='Mentor Profile Photo'
               />
             ) : (
               <img
-                className='z-5 object-cover w-full h-full rounded-lg shadow-md'
+                className='z-5 object-cover  h-full rounded-full shadow-md'
                 src={noImage}
                 alt='Profile Image Not Found'
               />

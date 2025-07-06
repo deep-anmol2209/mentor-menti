@@ -89,6 +89,7 @@ await paymentApi.createPayment(bookingId, razorpay_payment_id)
 };
 
 const getPaymentsByMentorId= async(req, res, next)=>{
+  try{
   console.log(req.user._id);
   
   
@@ -102,7 +103,8 @@ const getPaymentsByMentorId= async(req, res, next)=>{
   }
 
   const payments= await paymentApi.getPaymentsByMentorId(mentorId)
-
+ console.log("payments: ", payments);
+ 
   if(!payments){
     return res.status(httpStatus.notFound)
   }
@@ -110,8 +112,11 @@ const getPaymentsByMentorId= async(req, res, next)=>{
     success: true,
     payments
   })
+}catch(error){
+  console.log(error);
+  
 }
-
+}
 
 
 module.exports = { createOrder, verifyPayment, getPaymentsByMentorId };

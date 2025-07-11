@@ -19,26 +19,20 @@ const initiateBookingAndPayment = async (req, res) => {
  console.log("bookingdate: ",bookingDate);
  console.log("newDate: ", new Date(bookingDate));
  
- 
-    // Existing slot availability checks...
-    // const isSlotTaken = await BookingModel.exists({
-    //   mentor: service.mentor,
-    //   serviceType: 'one-on-one',
-    //   status: { $ne: 'cancelled' },
-    //   bookingDate: new Date(bookingDate),
-    //   $and: [
-    //     { startTime: { $lt: endTime }, endTime: { $gt: startTime } }
-    //   ]
-    // });
 
-    const isSlotTaken = await BookingModel.exists({
-      mentor: service.mentor,
-      serviceType: 'one-on-one',
-      status: { $ne: 'cancelled' },
-      bookingDate: new Date(bookingDate),
-      startTime: { $ne: endTime },
-      endTime: { $ne: startTime }
-    });
+ const isSlotTaken = await BookingModel.exists({
+  mentor: service.mentor,
+  serviceType: 'one-on-one',
+  status: { $ne: 'cancelled' },
+  bookingDate: new Date(bookingDate),
+  $or: [
+    {
+      startTime: { $lt: endTime },
+      endTime: { $gt: startTime }
+    }
+  ]
+});
+
     
 console.log(isSlotTaken);
 
